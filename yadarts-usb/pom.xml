@@ -17,7 +17,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2.2</version>
 				<executions>
 					<execution>
 						<configuration>
@@ -43,6 +42,10 @@
 		<dependency>
 			<groupId>de.ailis.usb4java</groupId>
 			<artifactId>usb4java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
 		</dependency>
 	</dependencies>
 
