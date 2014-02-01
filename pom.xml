@@ -12,7 +12,7 @@
 
 	<modules>
 		<module>yadarts-api</module>
-		<module>yadarts-core</module>
+		<module>yadarts-event</module>
 		<module>yadarts-usb</module>
 	</modules>
 
@@ -47,6 +47,12 @@
 				<artifactId>yadarts-usb</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>yadarts-event</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>

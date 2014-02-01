@@ -26,11 +26,11 @@ import spare.n52.yadarts.event.EventProducer;
  * It manages the available implementations of {@link EventListener}
  * and starts/stops the {@link EventProducer} instance
  */
-public class CoreEngine {
+public class EventEngine {
 	
 	private EventProducer producer;
 
-	public CoreEngine() throws InitializationException {
+	public EventEngine() throws InitializationException {
 		this.producer = initializeProducer();
 		initializeListeners();
 		this.producer.start();

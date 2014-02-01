@@ -9,7 +9,7 @@
 		<version>0.1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>yadarts-core</artifactId>
+	<artifactId>yadarts-event</artifactId>
 	<packaging>jar</packaging>
 
 	<dependencies>
