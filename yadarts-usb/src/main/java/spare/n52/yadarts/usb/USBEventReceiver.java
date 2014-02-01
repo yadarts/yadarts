@@ -24,6 +24,6 @@ public interface USBEventReceiver {
 	/**
 	 * @param rawData the raw data as byte array
 	 */
-	void processEvent(byte[] rawData);
+	void processEvent(int[] rawData);
 
 }

@@ -63,7 +63,7 @@ public class USBEventProducer implements EventProducer, USBEventReceiver {
 	}
 	
 	@Override
-	public void processEvent(final byte[] rawData) {
+	public void processEvent(final int[] rawData) {
 		executor.submit(new Runnable() {
 			
 			@Override

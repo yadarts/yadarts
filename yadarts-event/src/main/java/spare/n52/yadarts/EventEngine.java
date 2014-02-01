@@ -28,12 +28,20 @@ import spare.n52.yadarts.event.EventProducer;
  */
 public class EventEngine {
 	
+	private static EventEngine instance;
 	private EventProducer producer;
 
-	public EventEngine() throws InitializationException {
+	private EventEngine() throws InitializationException {
 		this.producer = initializeProducer();
 		initializeListeners();
 		this.producer.start();
+	}
+	
+	public static synchronized EventEngine instance() throws InitializationException {
+		if (instance == null) {
+			instance = new EventEngine();
+		}
+		return instance;
 	}
 	
 	/**

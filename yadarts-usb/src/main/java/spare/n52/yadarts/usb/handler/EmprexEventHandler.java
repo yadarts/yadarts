@@ -16,13 +16,47 @@
  */
 package spare.n52.yadarts.usb.handler;
 
+
 import spare.n52.yadarts.entity.InteractionEvent;
+import spare.n52.yadarts.entity.impl.ButtonEvent;
+import spare.n52.yadarts.entity.impl.HitEvent;
 
 public class EmprexEventHandler implements EventHandler {
 
 	@Override
-	public InteractionEvent createEvent(byte[] rawData) {
-		//TODO implement
+	public InteractionEvent createEvent(int[] rawData) {
+		return parsePacket(rawData[0], rawData[1]);
+	}
+
+	private InteractionEvent parsePacket(int base, int value) {
+		if (value >= 129) {
+			return HitEvent.singleHit(value - 128);
+		}
+		
+		if (value >= 97) {
+			return HitEvent.tripleHit(value - 96);
+		}
+		
+		if (value >= 65) {
+			return HitEvent.doubleHit(value - 64);
+		}
+		
+		if (value == 57) {
+			return HitEvent.singleHit(25);
+		}
+		
+		if (value == 4) {
+			return ButtonEvent.bounceOut();
+		}
+		
+		if (value == 3) {
+			return ButtonEvent.dartMissed();
+		}
+		
+		if (value == 1) {
+			return ButtonEvent.nextPlayer();
+		}
+		
 		return null;
 	}
 

@@ -29,6 +29,6 @@ public interface EventHandler {
 	 * @param rawData the raw data
 	 * @return the high-level representation of the data
 	 */
-	InteractionEvent createEvent(byte[] rawData);
+	InteractionEvent createEvent(int[] rawData);
 
 }
