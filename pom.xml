@@ -14,6 +14,8 @@
 		<module>yadarts-api</module>
 		<module>yadarts-event</module>
 		<module>yadarts-usb</module>
+		<module>yadarts-dummy-board</module>
+		<module>yadarts-runtime</module>
 	</modules>
 
 	<properties>
@@ -50,6 +52,16 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>yadarts-event</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>yadarts-dummy-board</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>yadarts-runtime</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

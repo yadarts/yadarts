@@ -9,13 +9,25 @@
 		<version>0.1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>yadarts-event</artifactId>
+	<artifactId>yadarts-runtime</artifactId>
 	<packaging>jar</packaging>
 
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>yadarts-api</artifactId>
+		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>${project.groupId}</groupId> -->
+<!-- 			<artifactId>yadarts-usb</artifactId> -->
+<!-- 		</dependency> -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>yadarts-event</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>yadarts-dummy-board</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

@@ -17,11 +17,14 @@
 package spare.n52.yadarts;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ServiceLoader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import spare.n52.yadarts.entity.InteractionEvent;
 import spare.n52.yadarts.event.EventListener;
 import spare.n52.yadarts.event.EventProducer;
 
@@ -30,16 +33,21 @@ import spare.n52.yadarts.event.EventProducer;
  * It manages the available implementations of {@link EventListener}
  * and starts/stops the {@link EventProducer} instance
  */
-public class EventEngine {
+public class EventEngine implements EventListener {
 	
 	private static final Logger logger = LoggerFactory.getLogger(EventEngine.class);
 	
 	private static EventEngine instance;
 	private EventProducer producer;
 
+	private List<EventListener> listeners = new ArrayList<>();
+
 	private EventEngine() throws InitializationException {
 		this.producer = initializeProducer();
 		initializeListeners();
+		
+		this.producer.registerEventListener(this);
+		
 		try {
 			this.producer.start();
 		} catch (IOException e) {
@@ -60,6 +68,7 @@ public class EventEngine {
 	public void shutdown() {
 		if (this.producer != null) {
 			try {
+				this.producer.removeEventListener(this);
 				this.producer.stop();
 			} catch (IOException e) {
 				logger.warn(e.getMessage(), e);
@@ -67,11 +76,11 @@ public class EventEngine {
 		}
 	}
 
-	private void initializeListeners() {
+	private synchronized void initializeListeners() {
 		ServiceLoader<EventListener> listeners = ServiceLoader.load(EventListener.class);
 		
 		for (EventListener l : listeners) {
-			this.producer.registerEventListener(l);
+			this.listeners.add(l);
 		}
 	}
 
@@ -86,6 +95,38 @@ public class EventEngine {
 		}
 
 		throw new InitializationException("Could not find an implementation of EventProducer");
+	}
+	
+	/**
+	 * Use this method to manually add an {@link EventListener} instance.
+	 * 
+	 * @param el the listener
+	 */
+	public synchronized void registerListener(EventListener el) {
+		this.listeners.add(el);
+	}
+
+	/**
+	 * Remove a listener, added with {@link #registerListener(EventListener)}
+	 * 
+	 * @param el the listener to remove
+	 */
+	public synchronized void removeListener(EventListener el) {
+		this.listeners.remove(el);
+	}
+	
+	@Override
+	public void receiveEvent(InteractionEvent event) {
+		synchronized (this) {
+			for (EventListener el : this.listeners) {
+				try {
+					el.receiveEvent(event);
+				}
+				catch (RuntimeException e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}
+		}
 	}
 
 }
