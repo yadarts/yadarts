@@ -47,11 +47,11 @@ public class DummyEventProducer implements EventProducer {
 			queue = new ArrayList<>();
 			
 			queue.add(HitEvent.doubleHit(20));
-			queue.add(HitEvent.singleHit(20));
+			queue.add(HitEvent.singleHitOuter(20));
 			queue.add(HitEvent.tripleHit(20));
 			queue.add(ButtonEvent.nextPlayer());
 			
-			queue.add(HitEvent.singleHit(1));
+			queue.add(HitEvent.singleHitOuter(1));
 			queue.add(ButtonEvent.bounceOut());
 			queue.add(ButtonEvent.dartMissed());
 			queue.add(ButtonEvent.nextPlayer());

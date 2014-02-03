@@ -23,15 +23,25 @@ public class HitEvent implements PointEvent {
 	private long time;
 	private int base;
 	private int multi;
+	private boolean outerRing;
 
 	private HitEvent(int base) {
-		this(base, 1);
+		this(base, true);
 	}
 	
 	private HitEvent(int base, int multi) {
+		this(base, multi, false);
+	}
+	
+	private HitEvent(int base, boolean outer) {
+		this(base, 1, outer);
+	}
+	
+	private HitEvent(int base, int multi, boolean outer) {
 		this.time = System.currentTimeMillis();
 		this.base = base;
 		this.multi = multi;
+		this.outerRing = outer;
 	}
 	
 	@Override
@@ -50,21 +60,35 @@ public class HitEvent implements PointEvent {
 	}
 	
 	@Override
+	public boolean isOuterRing() {
+		return outerRing;
+	}
+	
+	@Override
+	public int getScoreValue() {
+		return this.base * this.multi;
+	}
+
+	@Override
 	public String toString() {
 		switch (this.multi) {
 		case 1:
-			return String.format("%d (%s)", this.base, this.time);
+			return String.format("%d - %s (%s)", this.base, this.outerRing ? "outer" : "inner", this.time);
 		case 2:
 			return String.format("Double %d (%s)", this.base, this.time);
 		case 3:
 			return String.format("Triple %d (%s)", this.base, this.time);
 		default:
-			return String.format("%d (%s)", this.base, this.time);
+			return String.format("%d - %s (%s)", this.base, this.outerRing ? "outer" : "inner", this.time);
 		}
 	}
 	
-	public static PointEvent singleHit(int number) {
+	public static PointEvent singleHitOuter(int number) {
 		return new HitEvent(number);
+	}
+	
+	public static PointEvent singleHitInner(int number) {
+		return new HitEvent(number, false);
 	}
 	
 	public static PointEvent doubleHit(int number) {

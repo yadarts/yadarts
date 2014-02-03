@@ -16,7 +16,11 @@
  */
 package spare.n52.yadarts;
 
+import java.io.IOException;
 import java.util.ServiceLoader;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import spare.n52.yadarts.event.EventListener;
 import spare.n52.yadarts.event.EventProducer;
@@ -28,13 +32,19 @@ import spare.n52.yadarts.event.EventProducer;
  */
 public class EventEngine {
 	
+	private static final Logger logger = LoggerFactory.getLogger(EventEngine.class);
+	
 	private static EventEngine instance;
 	private EventProducer producer;
 
 	private EventEngine() throws InitializationException {
 		this.producer = initializeProducer();
 		initializeListeners();
-		this.producer.start();
+		try {
+			this.producer.start();
+		} catch (IOException e) {
+			throw new InitializationException(e);
+		}
 	}
 	
 	public static synchronized EventEngine instance() throws InitializationException {
@@ -49,7 +59,11 @@ public class EventEngine {
 	 */
 	public void shutdown() {
 		if (this.producer != null) {
-			this.producer.stop();
+			try {
+				this.producer.stop();
+			} catch (IOException e) {
+				logger.warn(e.getMessage(), e);
+			}
 		}
 	}
 

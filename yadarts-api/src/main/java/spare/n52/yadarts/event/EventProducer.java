@@ -16,6 +16,9 @@
  */
 package spare.n52.yadarts.event;
 
+import java.io.IOException;
+
+import spare.n52.yadarts.InitializationException;
 import spare.n52.yadarts.entity.InteractionEvent;
 
 /**
@@ -46,13 +49,16 @@ public interface EventProducer {
 	/**
 	 * An implementation shall start creating events
 	 * after calling this method
+	 * @throws IOException 
+	 * @throws InitializationException 
 	 */
-	public void start();
+	public void start() throws IOException;
 	
 	/**
 	 * An implementation shall stop creating events
 	 * after calling this method
+	 * @throws IOException 
 	 */
-	public void stop();
+	public void stop() throws IOException;
 	
 }

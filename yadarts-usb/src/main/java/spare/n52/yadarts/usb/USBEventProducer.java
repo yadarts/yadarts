@@ -16,6 +16,7 @@
  */
 package spare.n52.yadarts.usb;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -27,17 +28,20 @@ import org.slf4j.LoggerFactory;
 import spare.n52.yadarts.entity.InteractionEvent;
 import spare.n52.yadarts.event.EventListener;
 import spare.n52.yadarts.event.EventProducer;
+import spare.n52.yadarts.usb.handler.ConfirmationEvent;
 import spare.n52.yadarts.usb.handler.EmprexEventHandler;
 import spare.n52.yadarts.usb.handler.EventHandler;
 
-public class USBEventProducer implements EventProducer, USBEventReceiver {
+public class USBEventProducer implements EventProducer, EmprexRawDataListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(USBEventProducer.class);
 	
 	private List<EventListener> listeners = new ArrayList<>();
-	private USBConnection connection;
+	private EmprexDriver driver;
 	private EventHandler handler;
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
+
+	protected InteractionEvent pending;
 	
 	public USBEventProducer() {
 		initHandlers();
@@ -47,9 +51,14 @@ public class USBEventProducer implements EventProducer, USBEventReceiver {
 		this.handler = new EmprexEventHandler();
 	}
 
-	private void initConnection() {
-		this.connection = new USBConnection(this);
-		this.connection.start();
+	private void initConnection() throws IOException {
+		this.driver = new EmprexDriver(this);
+		if (this.driver.isReady()) {
+			this.driver.start();
+		}
+		else {
+			throw new IOException("Could not init the dongle driver.");
+		}
 	}
 
 	@Override
@@ -63,7 +72,8 @@ public class USBEventProducer implements EventProducer, USBEventReceiver {
 	}
 	
 	@Override
-	public void processEvent(final int[] rawData) {
+	public void receiveData(byte[] dataBuffer, final int byteCount) {
+		final int[] rawData = convertToIntArray(dataBuffer, byteCount);
 		executor.submit(new Runnable() {
 			
 			@Override
@@ -75,9 +85,24 @@ public class USBEventProducer implements EventProducer, USBEventReceiver {
 				}
 				
 				synchronized (USBEventProducer.this) {
+					InteractionEvent outgoing;
+					/*
+					 * we receive the actual event and then a "release"
+					 * event in order. fire the event after the
+					 * release was received.
+					 */
+					if (event instanceof ConfirmationEvent) {
+						outgoing = pending;
+						pending = null;
+					} 
+					else {
+						pending = event;
+						return;
+					}
+					
 					for (EventListener el : USBEventProducer.this.listeners) {
 						try {
-							el.receiveEvent(event);
+							el.receiveEvent(outgoing);
 						}
 						catch (RuntimeException e) {
 							logger.warn(e.getMessage(), e);
@@ -90,14 +115,24 @@ public class USBEventProducer implements EventProducer, USBEventReceiver {
 		
 	}
 
+	protected int[] convertToIntArray(byte[] dataBuffer, int byteCount) {
+		int[] result = new int[Math.min(byteCount, dataBuffer.length)];
+		
+		for (int i = 0; i < result.length; i++) {
+			result[i] = dataBuffer[i] & 0xFF;
+		}
+
+		return result;
+	}
+
 	@Override
-	public void start() {
+	public void start() throws IOException {
 		initConnection();
 	}
 
 	@Override
-	public void stop() {
-		this.connection.shutdown();
+	public void stop() throws IOException {
+		this.driver.shutdown();
 	}
 	
 }

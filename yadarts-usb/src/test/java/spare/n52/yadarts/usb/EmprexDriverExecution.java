@@ -16,14 +16,28 @@
  */
 package spare.n52.yadarts.usb;
 
-/**
- * Interface for processing raw data from the USB device.
- */
-public interface USBEventReceiver {
+import java.io.IOException;
 
-	/**
-	 * @param rawData the raw data as byte array
-	 */
-	void processEvent(int[] rawData);
+import spare.n52.yadarts.entity.InteractionEvent;
+import spare.n52.yadarts.event.EventListener;
 
+
+public class EmprexDriverExecution {
+	
+	public static void main(String[] args) throws IOException, InterruptedException {
+		USBEventProducer ep = new USBEventProducer();
+		
+		ep.registerEventListener(new EventListener() {
+			
+			@Override
+			public void receiveEvent(InteractionEvent event) {
+				System.out.println(event);
+			}
+		});
+		
+		ep.start();
+		
+		Thread.sleep(100000);
+	}
+	
 }

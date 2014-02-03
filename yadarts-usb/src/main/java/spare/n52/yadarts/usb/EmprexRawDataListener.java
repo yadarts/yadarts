@@ -14,31 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package spare.n52.yadarts.entity;
+package spare.n52.yadarts.usb;
 
-/**
- * Interface for representing a common hit on the dart board
- */
-public interface PointEvent extends InteractionEvent {
+public interface EmprexRawDataListener {
 
 	/**
-	 * @return the base number of the hit
+	 * gets called whenever a new data packet has been received
+	 * the dataBuffer provided might be re-used in the communication
+	 * component, so an implementation shall take care of copying
+	 * all relevant data.
+	 * 
+	 * @param dataBuffer the containing buffer
+	 * @param byteCount the received byte count
 	 */
-	public int getBaseNumber();
-	
-	/**
-	 * @return the multiplier ("Triple 20") of the hit
-	 */
-	public int getMutliplier();
-
-	/**
-	 * @return if the outer ring was hit
-	 */
-	boolean isOuterRing();
-
-	/**
-	 * @return the score value
-	 */
-	int getScoreValue();
+	public void receiveData(byte[] dataBuffer, int byteCount);
 	
 }

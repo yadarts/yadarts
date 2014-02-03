@@ -14,31 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package spare.n52.yadarts.entity;
+package spare.n52.yadarts.usb.handler;
 
-/**
- * Interface for representing a common hit on the dart board
- */
-public interface PointEvent extends InteractionEvent {
+import spare.n52.yadarts.entity.InteractionEvent;
 
-	/**
-	 * @return the base number of the hit
-	 */
-	public int getBaseNumber();
+public class ConfirmationEvent implements InteractionEvent {
+
+	private long timestamp;
+
+	public ConfirmationEvent() {
+		this.timestamp = System.currentTimeMillis();
+	}
 	
-	/**
-	 * @return the multiplier ("Triple 20") of the hit
-	 */
-	public int getMutliplier();
+	@Override
+	public long getTimestamp() {
+		return this.timestamp;
+	}
 
-	/**
-	 * @return if the outer ring was hit
-	 */
-	boolean isOuterRing();
-
-	/**
-	 * @return the score value
-	 */
-	int getScoreValue();
-	
 }

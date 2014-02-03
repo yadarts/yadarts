@@ -46,6 +46,21 @@ public class EmprexHandlerTest {
 	}
 	
 	@Test
+	public void shouldCreateInnerSingleHit() {
+		InteractionEvent result = handler.createEvent(new int[] {
+				Integer.parseInt("02", 16), Integer.parseInt("28", 16),
+				Integer.parseInt("00", 16), Integer.parseInt("00", 16),
+				Integer.parseInt("00", 16), Integer.parseInt("00", 16),
+				Integer.parseInt("00", 16)
+				});
+		
+		Assert.assertThat(result, is(instanceOf(PointEvent.class)));
+		Assert.assertThat(((PointEvent) result).getMutliplier(), is(1));
+		Assert.assertThat(((PointEvent) result).getBaseNumber(), is(8));
+		Assert.assertThat(((PointEvent) result).isOuterRing(), is(not(true)));
+	}
+	
+	@Test
 	public void shouldCreateDoubleHit() {
 		InteractionEvent result = handler.createEvent(new int[] {
 				Integer.parseInt("02", 16), Integer.parseInt("42", 16),

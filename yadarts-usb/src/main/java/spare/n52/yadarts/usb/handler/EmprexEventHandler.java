@@ -30,7 +30,10 @@ public class EmprexEventHandler implements EventHandler {
 
 	private InteractionEvent parsePacket(int base, int value) {
 		if (value >= 129) {
-			return HitEvent.singleHit(value - 128);
+			/*
+			 * outer ring
+			 */
+			return HitEvent.singleHitOuter(value - 128);
 		}
 		
 		if (value >= 97) {
@@ -42,7 +45,14 @@ public class EmprexEventHandler implements EventHandler {
 		}
 		
 		if (value == 57) {
-			return HitEvent.singleHit(25);
+			return HitEvent.singleHitInner(25);
+		}
+		
+		if (value >= 33) {
+			/*
+			 * inner ring
+			 */
+			return HitEvent.singleHitInner(value - 32);
 		}
 		
 		if (value == 4) {
@@ -55,6 +65,10 @@ public class EmprexEventHandler implements EventHandler {
 		
 		if (value == 1) {
 			return ButtonEvent.nextPlayer();
+		}
+		
+		if (value == 0) {
+			return new ConfirmationEvent();
 		}
 		
 		return null;

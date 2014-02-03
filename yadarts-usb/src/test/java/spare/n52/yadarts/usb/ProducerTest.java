@@ -26,6 +26,13 @@ import spare.n52.yadarts.event.EventListener;
 
 public class ProducerTest {
 
+	private byte[] confirmation = new byte[] {
+			(byte) Integer.parseInt("02", 16), (byte) Integer.parseInt("00", 16),
+			(byte) Integer.parseInt("00", 16), (byte) Integer.parseInt("00", 16),
+			(byte) Integer.parseInt("00", 16), (byte) Integer.parseInt("00", 16),
+			(byte) Integer.parseInt("00", 16)
+			};
+
 	@Test
 	public void testProducerWorkflow() throws InterruptedException {
 		USBEventProducer prod = new USBEventProducer();
@@ -33,35 +40,39 @@ public class ProducerTest {
 		DummyListener dl = new DummyListener();
 		prod.registerEventListener(dl);
 		
-		prod.processEvent(new int[] {
-				Integer.parseInt("02", 16), Integer.parseInt("04", 16),
-				Integer.parseInt("00", 16), Integer.parseInt("00", 16),
-				Integer.parseInt("00", 16), Integer.parseInt("00", 16),
-				Integer.parseInt("00", 16)
-				});
-		prod.processEvent(new int[] {
-				Integer.parseInt("02", 16), Integer.parseInt("03", 16),
-				Integer.parseInt("00", 16), Integer.parseInt("00", 16),
-				Integer.parseInt("00", 16), Integer.parseInt("00", 16),
-				Integer.parseInt("00", 16)
-				});
-		prod.processEvent(new int[] {
-				Integer.parseInt("02", 16), Integer.parseInt("01", 16),
-				Integer.parseInt("00", 16), Integer.parseInt("00", 16),
-				Integer.parseInt("00", 16), Integer.parseInt("00", 16),
-				Integer.parseInt("00", 16)
-				});
+		prod.receiveData(new byte[] {
+				(byte) Integer.parseInt("02", 16), (byte) Integer.parseInt("04", 16),
+				(byte) Integer.parseInt("00", 16), (byte) Integer.parseInt("00", 16),
+				(byte) Integer.parseInt("00", 16), (byte) Integer.parseInt("00", 16),
+				(byte) Integer.parseInt("00", 16)
+				}, 7);
+		prod.receiveData(confirmation, 7);
+		prod.receiveData(new byte[] {
+				(byte) Integer.parseInt("02", 16), (byte) Integer.parseInt("03", 16),
+				(byte) Integer.parseInt("00", 16), (byte) Integer.parseInt("00", 16),
+				(byte) Integer.parseInt("00", 16), (byte) Integer.parseInt("00", 16),
+				(byte) Integer.parseInt("00", 16)
+				}, 7);
+		prod.receiveData(confirmation, 7);
+		prod.receiveData(new byte[] {
+				(byte) Integer.parseInt("02", 16), (byte) Integer.parseInt("01", 16),
+				(byte) Integer.parseInt("00", 16), (byte) Integer.parseInt("00", 16),
+				(byte) Integer.parseInt("00", 16), (byte) Integer.parseInt("00", 16),
+				(byte) Integer.parseInt("00", 16)
+				}, 7);
+		prod.receiveData(confirmation, 7);
 
 		Thread.sleep(2000);
 		
 		prod.removeEventListener(dl);
 		
-		prod.processEvent(new int[] {
-				Integer.parseInt("02", 16), Integer.parseInt("8a", 16),
-				Integer.parseInt("00", 16), Integer.parseInt("00", 16),
-				Integer.parseInt("00", 16), Integer.parseInt("00", 16),
-				Integer.parseInt("00", 16)
-				});
+		prod.receiveData(new byte[] {
+				(byte) Integer.parseInt("02", 16), (byte) Integer.parseInt("8a", 16),
+				(byte) Integer.parseInt("00", 16), (byte) Integer.parseInt("00", 16),
+				(byte) Integer.parseInt("00", 16), (byte) Integer.parseInt("00", 16),
+				(byte) Integer.parseInt("00", 16)
+				}, 7);
+		prod.receiveData(confirmation, 7);
 		
 		Thread.sleep(2000);
 		
