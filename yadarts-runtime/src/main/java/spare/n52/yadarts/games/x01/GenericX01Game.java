@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package spare.n52.yadarts.games;
+package spare.n52.yadarts.games.x01;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +22,8 @@ import java.util.List;
 
 import spare.n52.yadarts.entity.Player;
 import spare.n52.yadarts.entity.PointEvent;
+import spare.n52.yadarts.games.AbstractGame;
+import spare.n52.yadarts.games.GameStatusUpdateListener;
 
 public class GenericX01Game extends AbstractGame {
 	
@@ -33,11 +35,13 @@ public class GenericX01Game extends AbstractGame {
 	private Score currentScore;
 	private GameStatusUpdateListener gameListener;
 	private int rounds = 1;
+	public CombinationCalculator combinationCalculator;
 
 	public GenericX01Game(List<Player> players, int targetScore, GameStatusUpdateListener gl) {
 		this.targetScore = targetScore;
 		this.players = players;
 		this.gameListener = gl;
+		
 		for (Player player : players) {
 			playerScoreMap.put(player, new Score());
 		}
@@ -49,7 +53,6 @@ public class GenericX01Game extends AbstractGame {
 		
 		if (this.currentPlayerIndex == 0) {
 			this.rounds++;
-			this.gameListener.roundStarted(this.rounds);
 		}
 		
 		this.currentPlayer = this.players.get(currentPlayerIndex);
@@ -61,6 +64,8 @@ public class GenericX01Game extends AbstractGame {
 
 	private void provideStatusUpdate() {
 		this.gameListener.onCurrentPlayerChanged(this.currentPlayer);
+		
+		this.gameListener.roundStarted(this.rounds);
 		
 		if (this.currentScore.canFinish()) {
 			this.gameListener.provideFinishingCombination(this.currentScore.calculateFinishingCombinations());
@@ -113,9 +118,14 @@ public class GenericX01Game extends AbstractGame {
 
 		public void addScoreValue(int i) {
 			this.currentTurn.addThrow(i);
+			
 			if (this.getTotalScore() + i > targetScore) {
 				bust(this);
 				return;
+			}
+			
+			if (this.currentTurn.hasRemainingThrows()) {
+				
 			}
 		}
 
@@ -133,13 +143,13 @@ public class GenericX01Game extends AbstractGame {
 		}
 
 		public boolean canFinish() {
-			//TODO impl
-			return false;
+			int count = this.currentTurn.getRemainingThrows();
+			return combinationCalculator.canFinishWith(count, targetScore - getTotalScore());
 		}
 		
 		public List<List<PointEvent>> calculateFinishingCombinations() {
-			//TODO impl
-			return null;
+			int count = this.currentTurn.getRemainingThrows();
+			return combinationCalculator.calculateFinishingCombinations(count, targetScore - getTotalScore());
 		}
 		
 	}
@@ -152,6 +162,14 @@ public class GenericX01Game extends AbstractGame {
 			throwz.add(i);
 		}
 		
+		public boolean hasRemainingThrows() {
+			return throwz.size() < 3;
+		}
+		
+		public int getRemainingThrows() {
+			return 3 - throwz.size();
+		}
+
 		public void invalidateLastThrow() {
 			throwz.remove(throwz.size()-1);
 			throwz.add(0);
