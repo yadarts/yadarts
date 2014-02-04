@@ -37,7 +37,7 @@ You can help report bugs by filing them here: <https://github.com/matthesrieke/y
 
 # Documentation
 
-If you have developed a new feature (see `Adding new features`), create
+If you have developed a new feature (see [Adding new features](#adding-new-features)), create
 a documentation draft in the corresponding issue. We decide how to
 include it into the overall project documentation.
 
