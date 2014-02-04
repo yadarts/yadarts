@@ -31,9 +31,14 @@ public class Constants {
 	public static final byte HID_DEVICE_CLASS = 0x03;
 	
 	/**
-	 * the usage page as specified for the HID device
+	 * the usage page as specified for the HID device (observed under linux)
 	 */
-	public static final short HID_USAGE_PAGE = ((Integer) 0x0600).shortValue();
+	public static final short HID_USAGE_PAGE_LINUX = ((Integer) 0x0600).shortValue();
+	
+	/**
+	 * the usage page as specified for the HID device (observed under windows)
+	 */
+	public static final short HID_USAGE_PAGE_WINDOWS = ((Integer) 0x06a0).shortValue();
 	
 	/**
 	 * the usage id as specified for the HID device
