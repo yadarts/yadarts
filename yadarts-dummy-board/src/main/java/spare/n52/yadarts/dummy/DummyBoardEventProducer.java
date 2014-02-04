@@ -89,6 +89,12 @@ public class DummyBoardEventProducer implements EventProducer {
 			@Override
 			public void run() {
 				while (running) {
+					try {
+						Thread.sleep(10000);
+					} catch (InterruptedException e) {
+						logger.warn(e.getMessage(), e);
+					}
+					
 					for (InteractionEvent ie : eventQueue) {
 						sendEvent(ie);
 						try {
@@ -96,12 +102,6 @@ public class DummyBoardEventProducer implements EventProducer {
 						} catch (InterruptedException e) {
 							logger.warn(e.getMessage(), e);
 						}
-					}
-					
-					try {
-						Thread.sleep(10000);
-					} catch (InterruptedException e) {
-						logger.warn(e.getMessage(), e);
 					}
 				}
 			}
