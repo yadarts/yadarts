@@ -65,7 +65,7 @@ public class EmprexUSBDriver {
 
 	public EmprexUSBDriver(short defaultVendorId2, short defaultProductId2,
 			EmprexRawDataListener el) throws IOException {
-		this.vendor = defaultProductId2;
+		this.vendor = defaultVendorId2;
 		this.product = defaultProductId2;
 		this.listener = el;
 
@@ -110,11 +110,6 @@ public class EmprexUSBDriver {
 
 	}
 
-	/**
-	 * @throws IOException
-	 *             if communicating with the device fails
-	 * 
-	 */
 	public void start() throws IOException {
 		try {
 			theInterface.claim(new UsbInterfacePolicy() {
@@ -202,6 +197,19 @@ public class EmprexUSBDriver {
 			/*
 			 * check if its the desired device
 			 */
+			return false;
+		}
+		
+		try {
+			usbInterface.claim(new UsbInterfacePolicy() {
+				@Override
+				public boolean forceClaim(UsbInterface usbInterface) {
+					return true;
+				}
+			});
+		} catch (UsbNotActiveException
+				| UsbDisconnectedException | UsbException e1) {
+			logger.warn(e1.getMessage(), e1);
 			return false;
 		}
 
