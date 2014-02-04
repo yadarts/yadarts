@@ -16,7 +16,6 @@
  */
 package spare.n52.yadarts.games.x01;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,18 +23,24 @@ import spare.n52.yadarts.entity.Player;
 import spare.n52.yadarts.entity.PointEvent;
 import spare.n52.yadarts.games.AbstractGame;
 import spare.n52.yadarts.games.GameStatusUpdateListener;
+import spare.n52.yadarts.games.Score;
 
-public class GenericX01Game extends AbstractGame {
+/**
+ * Class represents the workflow of a generic X01 game.
+ * Currently, double/triple-in/out is not supported.
+ */
+public class GenericX01Game extends AbstractGame implements X01Host {
 	
 	private HashMap<Player, Score> playerScoreMap = new HashMap<>();
 	private int targetScore;
 	private int currentPlayerIndex;
 	private List<Player> players;
 	private Player currentPlayer;
-	private Score currentScore;
+	private X01Score currentScore;
 	private GameStatusUpdateListener gameListener;
 	private int rounds = 1;
-	public CombinationCalculator combinationCalculator;
+	private boolean playerFinished;
+	private boolean gameFinished;
 
 	public GenericX01Game(List<Player> players, int targetScore, GameStatusUpdateListener gl) {
 		this.targetScore = targetScore;
@@ -43,20 +48,37 @@ public class GenericX01Game extends AbstractGame {
 		this.gameListener = gl;
 		
 		for (Player player : players) {
-			playerScoreMap.put(player, new Score());
+			playerScoreMap.put(player, new X01Score(this));
 		}
+		
+		this.currentPlayer = this.players.get(0);
+		this.currentScore = (X01Score) this.playerScoreMap.get(this.currentPlayer);
+		this.currentScore.startTurn();
+		
+		this.gameListener.roundStarted(this.rounds);
 	}
 
 	@Override
 	protected void onNextPlayer() {
+		if (this.gameFinished) {
+			return;
+		}
+		
 		this.currentPlayerIndex = (this.currentPlayerIndex + 1) % players.size();
 		
 		if (this.currentPlayerIndex == 0) {
+			if (this.playerFinished) {
+				this.gameListener.onGameFinished(this.playerScoreMap);
+				this.gameFinished = true;
+				return;
+			}
 			this.rounds++;
+			this.gameListener.roundStarted(this.rounds);
+			
 		}
 		
 		this.currentPlayer = this.players.get(currentPlayerIndex);
-		this.currentScore = this.playerScoreMap.get(currentPlayer);
+		this.currentScore = (X01Score) this.playerScoreMap.get(currentPlayer);
 		this.currentScore.startTurn();
 		
 		provideStatusUpdate();
@@ -65,16 +87,17 @@ public class GenericX01Game extends AbstractGame {
 	private void provideStatusUpdate() {
 		this.gameListener.onCurrentPlayerChanged(this.currentPlayer);
 		
-		this.gameListener.roundStarted(this.rounds);
-		
-		if (this.currentScore.canFinish()) {
-			this.gameListener.provideFinishingCombination(this.currentScore.calculateFinishingCombinations());
-		}
+		this.currentScore.checkFinishingPossibility();
 	}
 
 	@Override
 	protected void onDartMissed() {
+		if (this.gameFinished) {
+			return;
+		}
+		
 		if (!this.currentScore.turnHasRemainingThrows()) {
+			this.gameListener.requestNextPlayerEvent();
 			return;
 		}
 		
@@ -83,7 +106,12 @@ public class GenericX01Game extends AbstractGame {
 
 	@Override
 	protected void onBounceOut() {
+		if (this.gameFinished) {
+			return;
+		}
+		
 		if (!this.currentScore.turnHasRemainingThrows()) {
+			this.gameListener.requestNextPlayerEvent();
 			return;
 		}
 		
@@ -92,104 +120,48 @@ public class GenericX01Game extends AbstractGame {
 
 	@Override
 	protected void processPointEvent(PointEvent event) {
+		if (this.gameFinished) {
+			return;
+		}
+		
 		if (!this.currentScore.turnHasRemainingThrows()) {
+			this.gameListener.requestNextPlayerEvent();
 			return;
 		}
 		
 		this.currentScore.addScoreValue(event.getScoreValue());
 	}
 
-	public void bust(Score score) {
+	@Override
+	public void firePlayerFinishedEvent() {
+		this.playerFinished = true;
+		this.gameListener.playerFinished(this.currentPlayer);
+	}
+	
+	@Override
+	public void turnEnded() {
+		this.gameListener.onTurnFinished(this.currentPlayer, this.currentScore.getRemainingScore());
+	}
+	
+	@Override
+	public void bust(X01Score score) {
 		this.gameListener.onBust(this.currentPlayer);
 	}
 	
-	private class Score {
+	@Override
+	public void provideRemainingScore() {
+		this.gameListener.remainingScoreForPlayer(this.currentPlayer, this.currentScore.getRemainingScore());
+	}
 
-		private List<Turn> turns;
-		private Turn currentTurn;
+	@Override
+	public int getTargetScore() {
+		return targetScore;
+	}
 
-		public boolean turnHasRemainingThrows() {
-			return this.currentTurn.getThrowCount() < 3;
-		}
-		
-		public void invalidateLastThrow() {
-			this.currentTurn.invalidateLastThrow();
-		}
-
-		public void addScoreValue(int i) {
-			this.currentTurn.addThrow(i);
-			
-			if (this.getTotalScore() + i > targetScore) {
-				bust(this);
-				return;
-			}
-			
-			if (this.currentTurn.hasRemainingThrows()) {
-				
-			}
-		}
-
-		private int getTotalScore() {
-			int result = 0;
-			for (Turn t : turns) {
-				result += t.getScore();
-			}
-			return result;
-		}
-
-		public void startTurn() {
-			this.currentTurn = new Turn();
-			this.turns.add(this.currentTurn);
-		}
-
-		public boolean canFinish() {
-			int count = this.currentTurn.getRemainingThrows();
-			return combinationCalculator.canFinishWith(count, targetScore - getTotalScore());
-		}
-		
-		public List<List<PointEvent>> calculateFinishingCombinations() {
-			int count = this.currentTurn.getRemainingThrows();
-			return combinationCalculator.calculateFinishingCombinations(count, targetScore - getTotalScore());
-		}
-		
+	@Override
+	public void provideFinishingCombination(
+			List<List<PointEvent>> finishingCombinations) {
+		this.gameListener.provideFinishingCombination(finishingCombinations);
 	}
 	
-	private class Turn {
-
-		List<Integer> throwz = new ArrayList<>();
-		
-		public void addThrow(int i) {
-			throwz.add(i);
-		}
-		
-		public boolean hasRemainingThrows() {
-			return throwz.size() < 3;
-		}
-		
-		public int getRemainingThrows() {
-			return 3 - throwz.size();
-		}
-
-		public void invalidateLastThrow() {
-			throwz.remove(throwz.size()-1);
-			throwz.add(0);
-		}
-
-		public int getScore() {
-			int result = 0;
-			
-			for (Integer i : throwz) {
-				result += i;
-			}
-			
-			return result;
-		}
-		
-		public int getThrowCount() {
-			return this.throwz.size();
-		}
-		
-	}
-
-
 }

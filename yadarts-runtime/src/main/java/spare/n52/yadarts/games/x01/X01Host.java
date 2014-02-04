@@ -14,30 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package spare.n52.yadarts.entity.impl;
+package spare.n52.yadarts.games.x01;
 
-import spare.n52.yadarts.entity.Player;
+import java.util.List;
 
-public class PlayerImpl implements Player {
+import spare.n52.yadarts.entity.PointEvent;
 
-	private String name;
-	
-	public PlayerImpl(String name) {
-		this.name = name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
+public interface X01Host {
 
-	@Override
-	public String getName() {
-		return name;
-	}
-	
-	@Override
-	public String toString() {
-		return name;
-	}
+	int getTargetScore();
+
+	void bust(X01Score x01Score);
+
+	void firePlayerFinishedEvent();
+
+	void provideRemainingScore();
+
+	void provideFinishingCombination(
+			List<List<PointEvent>> calculateFinishingCombinations);
+
+	void turnEnded();
 
 }

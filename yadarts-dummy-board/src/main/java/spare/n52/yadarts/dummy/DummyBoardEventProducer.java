@@ -61,6 +61,7 @@ public class DummyBoardEventProducer implements EventProducer {
 		eventQueue.add(ButtonEvent.nextPlayer());
 		eventQueue.add(HitEvent.singleHitInner(1));
 		eventQueue.add(ButtonEvent.bounceOut());
+		eventQueue.add(HitEvent.singleHitInner(19));
 		eventQueue.add(ButtonEvent.dartMissed());
 		eventQueue.add(ButtonEvent.nextPlayer());
 	}
@@ -90,7 +91,7 @@ public class DummyBoardEventProducer implements EventProducer {
 			public void run() {
 				while (running) {
 					try {
-						Thread.sleep(10000);
+						Thread.sleep(5000);
 					} catch (InterruptedException e) {
 						logger.warn(e.getMessage(), e);
 					}

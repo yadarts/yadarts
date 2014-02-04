@@ -28,7 +28,7 @@ public class ConsoleLogger implements EventListener {
 	
 	@Override
 	public void receiveEvent(InteractionEvent event) {
-		logger.info("Received Event: {}", event);
+		logger.trace("Received Event: {}", event);
 	}
 
 }

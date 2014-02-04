@@ -17,6 +17,7 @@
 package spare.n52.yadarts.games;
 
 import java.util.List;
+import java.util.Map;
 
 import spare.n52.yadarts.entity.Player;
 import spare.n52.yadarts.entity.PointEvent;
@@ -31,5 +32,15 @@ public interface GameStatusUpdateListener {
 	void onBust(Player currentPlayer);
 
 	void roundStarted(int rounds);
+
+	void onTurnFinished(Player finishedPlayer, int totalScore);
+
+	void remainingScoreForPlayer(Player currentPlayer, int remainingScore);
+
+	void requestNextPlayerEvent();
+
+	void playerFinished(Player currentPlayer);
+
+	void onGameFinished(Map<Player, Score> playerScoreMap);
 
 }

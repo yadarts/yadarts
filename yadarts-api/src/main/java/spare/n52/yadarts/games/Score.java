@@ -14,30 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package spare.n52.yadarts.entity.impl;
+package spare.n52.yadarts.games;
 
-import spare.n52.yadarts.entity.Player;
-
-public class PlayerImpl implements Player {
-
-	private String name;
-	
-	public PlayerImpl(String name) {
-		this.name = name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-	
-	@Override
-	public String toString() {
-		return name;
-	}
+public interface Score {
 
 }
