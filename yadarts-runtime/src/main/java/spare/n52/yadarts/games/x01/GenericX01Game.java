@@ -56,6 +56,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		this.currentScore.startTurn();
 		
 		this.gameListener.roundStarted(this.rounds);
+		provideStatusUpdate();
 	}
 
 	@Override
