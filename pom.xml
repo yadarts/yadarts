@@ -24,6 +24,32 @@
 		<logback.version>1.0.13</logback.version>
 	</properties>
 
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+		</license>
+	</licenses>
+	
+	<contributors>
+		<contributor>
+			<name>Eike H. Jürrens</name>
+			<email>e.h.juerrens@52north.org</email>
+		</contributor>
+		<contributor>
+			<name>Benjamin Pross</name>
+			<email>b.pross@52north.org</email>
+		</contributor>
+		<contributor>
+			<name>Matthes Rieke</name>
+			<email>m.rieke@52north.org</email>
+		</contributor>
+		<contributor>
+			<name>Jan Schulte</name>
+			<email>j.schulte@52north.org</email>
+		</contributor>
+	</contributors>
+
 	<repositories>
 		<repository>
 			<id>ailis</id>
