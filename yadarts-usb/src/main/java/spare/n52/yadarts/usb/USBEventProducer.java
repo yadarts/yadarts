@@ -37,7 +37,7 @@ public class USBEventProducer implements EventProducer, EmprexRawDataListener {
 	private static final Logger logger = LoggerFactory.getLogger(USBEventProducer.class);
 	
 	private List<EventListener> listeners = new ArrayList<>();
-	private EmprexUSBDriver driver;
+	private SimplifiedEmprexUSBDriver driver;
 	private EventHandler handler;
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -52,7 +52,7 @@ public class USBEventProducer implements EventProducer, EmprexRawDataListener {
 	}
 
 	private void initConnection() throws IOException {
-		this.driver = new EmprexUSBDriver(this);
+		this.driver = new SimplifiedEmprexUSBDriver(this);
 		if (this.driver.isReady()) {
 			this.driver.start();
 		}

@@ -80,7 +80,7 @@ public class EmprexUSBDriver {
 		return this.theInterface != null;
 	}
 
-	private void initialize() throws SecurityException, UsbException {
+	protected void initialize() throws SecurityException, UsbException {
 		UsbServices services = UsbHostManager.getUsbServices();
 		UsbHub usbHub = services.getRootUsbHub();
 
