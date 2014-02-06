@@ -80,7 +80,7 @@ public class EmprexUSBDriver {
 		return this.theInterface != null;
 	}
 
-	private void initialize() throws SecurityException, UsbException {
+	protected void initialize() throws SecurityException, UsbException {
 		UsbServices services = UsbHostManager.getUsbServices();
 		UsbHub usbHub = services.getRootUsbHub();
 
@@ -106,6 +106,7 @@ public class EmprexUSBDriver {
 			 */
 			logger.info("Found the device: {}", usbInterface);
 			this.theInterface = usbInterface;
+			break;
 		}
 
 	}
@@ -251,7 +252,7 @@ public class EmprexUSBDriver {
 			return false;
 		}
 
-		if (UsbUtil.toInt(Constants.HID_USAGE_PAGE, Constants.HID_USAGE_ID) == 
+		if (UsbUtil.toInt(Constants.HID_USAGE_PAGE_LINUX, Constants.HID_USAGE_ID) == 
 				UsbUtil.toInt(data[0], data[1], data[2], data[3])) {
 			/*
 			 * the usage fits!
@@ -259,6 +260,14 @@ public class EmprexUSBDriver {
 			return true;
 		}
 
+		if (UsbUtil.toInt(Constants.HID_USAGE_PAGE_WINDOWS, Constants.HID_USAGE_ID) == 
+				UsbUtil.toInt(data[0], data[1], data[2], data[3])) {
+			/*
+			 * the usage fits!
+			 */
+			return true;
+		}
+		
 		return false;
 	}
 
