@@ -97,6 +97,10 @@ public class DummyBoardEventProducer implements EventProducer {
 					}
 					
 					for (InteractionEvent ie : eventQueue) {
+						if (!running) {
+							break;
+						}
+						
 						sendEvent(ie);
 						try {
 							Thread.sleep(2000);

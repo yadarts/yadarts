@@ -38,21 +38,24 @@ public class EventEngine implements EventListener {
 	private static final Logger logger = LoggerFactory.getLogger(EventEngine.class);
 	
 	private static EventEngine instance;
+
+	private static List<EventListener> serviceLoadedlisteners = new ArrayList<>();
 	private EventProducer producer;
 
 	private List<EventListener> listeners = new ArrayList<>();
 
-	private EventEngine() throws InitializationException {
-		this.producer = initializeProducer();
-		initializeListeners();
+	private boolean running;
+	
+	static {
+		ServiceLoader<EventListener> listeners = ServiceLoader.load(EventListener.class);
 		
-		this.producer.registerEventListener(this);
-		
-		try {
-			this.producer.start();
-		} catch (IOException e) {
-			throw new InitializationException(e);
+		for (EventListener l : listeners) {
+			serviceLoadedlisteners.add(l);
 		}
+	}
+
+	private EventEngine() throws InitializationException {
+		this.listeners.addAll(serviceLoadedlisteners);
 	}
 	
 	public static synchronized EventEngine instance() throws InitializationException {
@@ -63,7 +66,33 @@ public class EventEngine implements EventListener {
 	}
 	
 	/**
-	 * free all initialized resources
+	 * start the {@link EventProducer} (= the USB connection in 
+	 * production mode).
+	 * Everything can be stopped again using {@link #shutdown()}
+	 * 
+	 * @throws InitializationException
+	 * @throws AlreadyRunningException
+	 */
+	public synchronized void start() throws InitializationException, AlreadyRunningException {
+		if (this.running) {
+			throw new AlreadyRunningException();
+		}
+		
+		this.producer = initializeProducer();
+		this.producer.registerEventListener(this);
+		
+		try {
+			this.producer.start();
+		} catch (IOException e) {
+			throw new InitializationException(e);
+		}
+		
+		this.running = true;
+	}
+	
+	/**
+	 * free all initialized resources. call if you would like
+	 * to stop the {@link EventProducer} instance from generacting events
 	 */
 	public void shutdown() {
 		if (this.producer != null) {
@@ -73,14 +102,6 @@ public class EventEngine implements EventListener {
 			} catch (IOException e) {
 				logger.warn(e.getMessage(), e);
 			}
-		}
-	}
-
-	private synchronized void initializeListeners() {
-		ServiceLoader<EventListener> listeners = ServiceLoader.load(EventListener.class);
-		
-		for (EventListener l : listeners) {
-			this.listeners.add(l);
 		}
 	}
 

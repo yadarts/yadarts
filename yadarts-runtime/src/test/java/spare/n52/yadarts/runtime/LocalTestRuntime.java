@@ -69,13 +69,13 @@ public class LocalTestRuntime {
 			}
 			
 			@Override
-			public void onCurrentPlayerChanged(Player currentPlayer) {
+			public void onCurrentPlayerChanged(Player currentPlayer, int remain) {
 				logger.info("####################");
 				logger.info("It is {}'s turn", currentPlayer);
 			}
 			
 			@Override
-			public void onBust(Player currentPlayer) {
+			public void onBust(Player currentPlayer, int remaining) {
 				logger.info("{} busted!", currentPlayer);
 			}
 
@@ -107,6 +107,29 @@ public class LocalTestRuntime {
 				for (Player player : playerScoreMap.keySet()) {
 					logger.info("{}: {}", player, playerScoreMap.get(player));
 				}
+			}
+
+			@Override
+			public void onPointEvent(PointEvent event) {
+				//TODO
+			}
+
+			@Override
+			public void onNextPlayerPressed() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onBounceOutPressed() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onDartMissedPressed() {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 		

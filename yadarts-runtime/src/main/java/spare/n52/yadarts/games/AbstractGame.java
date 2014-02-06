@@ -55,19 +55,19 @@ public abstract class AbstractGame implements Game, EventListener {
 	}
 	
 	protected boolean isTripleHit(PointEvent e) {
-		return e.getMutliplier() == 3;
+		return e.getMultiplier() == 3;
 	}
 	
 	protected boolean isDoubleHit(PointEvent e) {
-		return e.getMutliplier() == 2;
+		return e.getMultiplier() == 2;
 	}
 	
 	protected boolean isBullseye(PointEvent e) {
-		return e.getMutliplier() == 1 && e.getBaseNumber() == 25;
+		return e.getMultiplier() == 1 && e.getBaseNumber() == 25;
 	}
 	
 	protected boolean isDoubleBullseye(PointEvent e) {
-		return e.getMutliplier() == 2 && e.getBaseNumber() == 25;
+		return e.getMultiplier() == 2 && e.getBaseNumber() == 25;
 	}
 
 	/**

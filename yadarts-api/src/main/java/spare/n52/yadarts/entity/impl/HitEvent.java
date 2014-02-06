@@ -55,7 +55,7 @@ public class HitEvent implements PointEvent {
 	}
 
 	@Override
-	public int getMutliplier() {
+	public int getMultiplier() {
 		return this.multi;
 	}
 	

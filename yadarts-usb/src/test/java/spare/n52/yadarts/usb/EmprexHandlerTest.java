@@ -41,7 +41,7 @@ public class EmprexHandlerTest {
 				});
 		
 		Assert.assertThat(result, is(instanceOf(PointEvent.class)));
-		Assert.assertThat(((PointEvent) result).getMutliplier(), is(1));
+		Assert.assertThat(((PointEvent) result).getMultiplier(), is(1));
 		Assert.assertThat(((PointEvent) result).getBaseNumber(), is(10));
 	}
 	
@@ -55,7 +55,7 @@ public class EmprexHandlerTest {
 				});
 		
 		Assert.assertThat(result, is(instanceOf(PointEvent.class)));
-		Assert.assertThat(((PointEvent) result).getMutliplier(), is(1));
+		Assert.assertThat(((PointEvent) result).getMultiplier(), is(1));
 		Assert.assertThat(((PointEvent) result).getBaseNumber(), is(8));
 		Assert.assertThat(((PointEvent) result).isOuterRing(), is(not(true)));
 	}
@@ -70,7 +70,7 @@ public class EmprexHandlerTest {
 				});
 		
 		Assert.assertThat(result, is(instanceOf(PointEvent.class)));
-		Assert.assertThat(((PointEvent) result).getMutliplier(), is(2));
+		Assert.assertThat(((PointEvent) result).getMultiplier(), is(2));
 		Assert.assertThat(((PointEvent) result).getBaseNumber(), is(2));
 	}
 	
@@ -84,7 +84,7 @@ public class EmprexHandlerTest {
 				});
 		
 		Assert.assertThat(result, is(instanceOf(PointEvent.class)));
-		Assert.assertThat(((PointEvent) result).getMutliplier(), is(3));
+		Assert.assertThat(((PointEvent) result).getMultiplier(), is(3));
 		Assert.assertThat(((PointEvent) result).getBaseNumber(), is(19));
 	}
 	
@@ -98,7 +98,7 @@ public class EmprexHandlerTest {
 				});
 		
 		Assert.assertThat(result, is(instanceOf(PointEvent.class)));
-		Assert.assertThat(((PointEvent) result).getMutliplier(), is(1));
+		Assert.assertThat(((PointEvent) result).getMultiplier(), is(1));
 		Assert.assertThat(((PointEvent) result).getBaseNumber(), is(25));
 	}
 	

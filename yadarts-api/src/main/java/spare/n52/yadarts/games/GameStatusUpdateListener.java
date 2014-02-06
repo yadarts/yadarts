@@ -27,9 +27,9 @@ public interface GameStatusUpdateListener {
 	void provideFinishingCombination(
 			List<List<PointEvent>> finishingCombinations);
 
-	void onCurrentPlayerChanged(Player currentPlayer);
+	void onCurrentPlayerChanged(Player currentPlayer, int remainingScore);
 
-	void onBust(Player currentPlayer);
+	void onBust(Player currentPlayer, int remainingScore);
 
 	void roundStarted(int rounds);
 
@@ -42,5 +42,13 @@ public interface GameStatusUpdateListener {
 	void playerFinished(Player currentPlayer);
 
 	void onGameFinished(Map<Player, Score> playerScoreMap);
+	
+	void onPointEvent(PointEvent event);
+	
+	void onNextPlayerPressed();
+	
+	void onBounceOutPressed();
+	
+	void onDartMissedPressed();
 
 }

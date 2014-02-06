@@ -57,6 +57,7 @@ public class X01Score implements Score {
 
 	public void addScoreValue(int i) {
 		if (this.getRemainingScore() - i < 0) {
+			this.currentTurn.busted();
 			this.host.bust(this);
 			return;
 		}
@@ -68,12 +69,13 @@ public class X01Score implements Score {
 		}
 		
 		if (this.currentTurn.hasRemainingThrows()) {
-			this.host.provideRemainingScore();
 			checkFinishingPossibility();
 		}
 		else {
 			this.host.turnEnded();
 		}
+		
+		this.host.provideRemainingScore();
 	}
 
 	private int getTotalScore() {
@@ -127,6 +129,14 @@ public class X01Score implements Score {
 			throwz.add(i);
 		}
 		
+		public void busted() {
+			int targetSize = Math.min(throwz.size() + 1, 3);
+			throwz = new ArrayList<>();
+			for (int i = 0; i < targetSize; i++) {
+				throwz.add(0);
+			}
+		}
+
 		public boolean hasRemainingThrows() {
 			return throwz.size() < 3;
 		}

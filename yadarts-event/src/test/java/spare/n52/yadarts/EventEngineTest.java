@@ -40,8 +40,8 @@ public class EventEngineTest {
 	}
 
 	@Test
-	public void testBasicWorkflow() throws InitializationException, InterruptedException {
-		EventEngine.instance();
+	public void testBasicWorkflow() throws InitializationException, InterruptedException, AlreadyRunningException {
+		EventEngine.instance().start();
 		
 		Thread.sleep(2000);
 		

@@ -86,7 +86,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 	}
 
 	private void provideStatusUpdate() {
-		this.gameListener.onCurrentPlayerChanged(this.currentPlayer);
+		this.gameListener.onCurrentPlayerChanged(this.currentPlayer, this.currentScore.getRemainingScore());
 		
 		this.currentScore.checkFinishingPossibility();
 	}
@@ -103,6 +103,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		}
 		
 		this.currentScore.addScoreValue(0);
+		this.gameListener.onDartMissedPressed();
 	}
 
 	@Override
@@ -117,6 +118,8 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		}
 		
 		this.currentScore.invalidateLastThrow();
+		this.gameListener.onBounceOutPressed();
+		this.gameListener.remainingScoreForPlayer(this.currentPlayer, this.currentScore.getRemainingScore());
 	}
 
 	@Override
@@ -130,6 +133,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 			return;
 		}
 		
+		this.gameListener.onPointEvent(event);
 		this.currentScore.addScoreValue(event.getScoreValue());
 	}
 
@@ -146,7 +150,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 	
 	@Override
 	public void bust(X01Score score) {
-		this.gameListener.onBust(this.currentPlayer);
+		this.gameListener.onBust(this.currentPlayer, score.getRemainingScore());
 	}
 	
 	@Override

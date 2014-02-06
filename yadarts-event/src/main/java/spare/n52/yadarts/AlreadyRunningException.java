@@ -14,31 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package spare.n52.yadarts.entity;
+package spare.n52.yadarts;
 
-/**
- * Interface for representing a common hit on the dart board
- */
-public interface PointEvent extends InteractionEvent {
+public class AlreadyRunningException extends Exception {
 
 	/**
-	 * @return the base number of the hit
+	 * 
 	 */
-	public int getBaseNumber();
-	
-	/**
-	 * @return the multiplier ("Triple 20") of the hit
-	 */
-	public int getMultiplier();
+	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @return if the outer ring was hit
-	 */
-	boolean isOuterRing();
-
-	/**
-	 * @return the score value
-	 */
-	int getScoreValue();
-	
 }
