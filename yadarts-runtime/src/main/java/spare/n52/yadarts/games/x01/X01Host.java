@@ -35,4 +35,6 @@ public interface X01Host {
 
 	void turnEnded();
 
+	void requestNextPlayerEvent();
+
 }

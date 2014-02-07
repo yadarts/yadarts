@@ -203,10 +203,10 @@ public abstract class AbstractGame implements Game, EventListener {
 		}
 
 		@Override
-		public synchronized void onGameFinished(Map<Player, Score> playerScoreMap) {
+		public synchronized void onGameFinished(Map<Player, Score> playerScoreMap, List<Player> winners) {
 			for (GameStatusUpdateListener g : listeners) {
 				try {
-					g.onGameFinished(playerScoreMap);
+					g.onGameFinished(playerScoreMap, winners);
 				} catch (RuntimeException e) {
 					logger.warn(e.getMessage(), e);
 				}

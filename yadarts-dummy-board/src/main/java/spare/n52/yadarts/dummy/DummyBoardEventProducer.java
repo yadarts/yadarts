@@ -51,17 +51,36 @@ public class DummyBoardEventProducer implements EventProducer {
 		eventQueue.add(HitEvent.tripleHit(20));
 		eventQueue.add(HitEvent.tripleHit(20));
 		eventQueue.add(ButtonEvent.nextPlayer());
+		
 		eventQueue.add(HitEvent.singleHitInner(1));
 		eventQueue.add(HitEvent.singleHitInner(20));
 		eventQueue.add(HitEvent.singleHitInner(5));
 		eventQueue.add(ButtonEvent.nextPlayer());
+		
 		eventQueue.add(HitEvent.tripleHit(20));
 		eventQueue.add(HitEvent.tripleHit(17));
 		eventQueue.add(HitEvent.doubleHit(5));
 		eventQueue.add(ButtonEvent.nextPlayer());
+		
 		eventQueue.add(HitEvent.singleHitInner(1));
 		eventQueue.add(ButtonEvent.bounceOut());
 		eventQueue.add(HitEvent.singleHitInner(19));
+		eventQueue.add(ButtonEvent.dartMissed());
+		eventQueue.add(ButtonEvent.nextPlayer());
+		
+		eventQueue.add(HitEvent.tripleHit(19));
+		eventQueue.add(HitEvent.singleHitInner(20));
+		eventQueue.add(HitEvent.singleHitInner(5));
+		eventQueue.add(ButtonEvent.nextPlayer());
+		
+		eventQueue.add(HitEvent.singleHitOuter(20));
+		eventQueue.add(HitEvent.doubleHit(17));
+		eventQueue.add(HitEvent.doubleHit(5));
+		eventQueue.add(ButtonEvent.nextPlayer());
+		
+		eventQueue.add(HitEvent.singleHitInner(8));
+		eventQueue.add(ButtonEvent.bounceOut());
+		eventQueue.add(HitEvent.singleHitInner(15));
 		eventQueue.add(ButtonEvent.dartMissed());
 		eventQueue.add(ButtonEvent.nextPlayer());
 	}
@@ -91,7 +110,7 @@ public class DummyBoardEventProducer implements EventProducer {
 			public void run() {
 				while (running) {
 					try {
-						Thread.sleep(5000);
+						Thread.sleep(2000);
 					} catch (InterruptedException e) {
 						logger.warn(e.getMessage(), e);
 					}
@@ -103,7 +122,7 @@ public class DummyBoardEventProducer implements EventProducer {
 						
 						sendEvent(ie);
 						try {
-							Thread.sleep(2000);
+							Thread.sleep(1000);
 						} catch (InterruptedException e) {
 							logger.warn(e.getMessage(), e);
 						}

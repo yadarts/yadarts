@@ -16,6 +16,7 @@
  */
 package spare.n52.yadarts.games.x01;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		
 		if (this.currentPlayerIndex == 0) {
 			if (this.playerFinished) {
-				this.gameListener.onGameFinished(this.playerScoreMap);
+				this.gameListener.onGameFinished(this.playerScoreMap, determineWinner());
 				this.gameFinished = true;
 				return;
 			}
@@ -80,6 +81,22 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		this.currentScore.startTurn();
 		
 		provideStatusUpdate();
+	}
+
+	private List<Player> determineWinner() {
+		List<Player> winner = new ArrayList<>();
+		
+		int minDarts = Integer.MAX_VALUE;
+		for (Player p : playerScoreMap.keySet()) {
+			Score score = playerScoreMap.get(p);
+			if (score.getTotalScore() == 0) {
+				if (score.getThrownDarts() <= minDarts) {
+					winner.add(p);
+				}
+			}
+		}
+		
+		return winner;
 	}
 
 	private void provideStatusUpdate() {
@@ -164,6 +181,11 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 	public void provideFinishingCombination(
 			List<List<PointEvent>> finishingCombinations) {
 		this.gameListener.onFinishingCombination(finishingCombinations);
+	}
+
+	@Override
+	public void requestNextPlayerEvent() {
+		this.gameListener.requestNextPlayerEvent();
 	}
 	
 }

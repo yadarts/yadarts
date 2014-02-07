@@ -91,8 +91,9 @@ public interface GameStatusUpdateListener {
 	 * finished (see {@link #onPlayerFinished(Player)}
 	 * 
 	 * @param playerScoreMap scores of all player
+	 * @param winner the winner
 	 */
-	void onGameFinished(Map<Player, Score> playerScoreMap);
+	void onGameFinished(Map<Player, Score> playerScoreMap, List<Player> winner);
 	
 	/**
 	 * provides a generic event and its points.

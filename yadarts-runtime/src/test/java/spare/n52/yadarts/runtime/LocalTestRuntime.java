@@ -102,7 +102,7 @@ public class LocalTestRuntime {
 			}
 
 			@Override
-			public void onGameFinished(Map<Player, Score> playerScoreMap) {
+			public void onGameFinished(Map<Player, Score> playerScoreMap, List<Player> winner) {
 				logger.info("The game has ended!");
 				
 				for (Player player : playerScoreMap.keySet()) {
