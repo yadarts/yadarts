@@ -56,7 +56,7 @@ public class X01Score implements Score {
 	}
 
 	public void addScoreValue(int i) {
-		if (this.currentTurn.isClosed()) {
+		if (this.currentTurn.isClosed() || playerFinished()) {
 			host.requestNextPlayerEvent();
 			return;
 		}

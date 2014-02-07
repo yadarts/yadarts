@@ -136,11 +136,19 @@ public class DummyBoardEventProducer implements EventProducer {
 
 
 	protected void sendEvent(InteractionEvent ie) {
+		if (!running) {
+			return;
+		}
+		
 		for (EventListener el : this.listeners) {
 			try {
 				el.receiveEvent(ie);
 			}
 			catch (RuntimeException e) {
+			}
+			
+			if (!running) {
+				break;
 			}
 		}
 	}
