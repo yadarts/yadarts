@@ -19,16 +19,9 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>yadarts-usb</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>yadarts-event</artifactId>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>${project.groupId}</groupId> -->
-<!-- 			<artifactId>yadarts-dummy-board</artifactId> -->
-<!-- 		</dependency> -->
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
