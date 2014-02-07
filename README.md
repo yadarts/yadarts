@@ -1,4 +1,4 @@
-# yadarts - yet another darts software [![Build Status](https://travis-ci.org/matthesrieke/yadarts.png?branch=master)](https://travis-ci.org/matthesrieke/yadarts)
+# yadarts - yet another darts software [![Build Status](https://travis-ci.org/yadarts/yadarts.png?branch=master)](https://travis-ci.org/yadarts/yadarts)
 
 This open source project uses the Emprex Wireless Dart Board and its
 protocol as the basis for a sophisticated, extensible dart software.
