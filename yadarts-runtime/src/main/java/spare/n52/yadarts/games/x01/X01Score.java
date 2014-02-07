@@ -34,7 +34,7 @@ public class X01Score implements Score {
 	}
 	
 	public int getRemainingScore() {
-		return this.host.getTargetScore() - getTotalScore();
+		return this.host.getTargetScore() - getAdditiveScore();
 	}
 
 	public boolean turnHasRemainingThrows() {
@@ -78,7 +78,7 @@ public class X01Score implements Score {
 		this.host.provideRemainingScore();
 	}
 
-	private int getTotalScore() {
+	private int getAdditiveScore() {
 		int result = 0;
 		for (Turn t : turns) {
 			result += t.getScore();
@@ -93,12 +93,12 @@ public class X01Score implements Score {
 
 	public boolean canFinish() {
 		int count = this.currentTurn.getRemainingThrows();
-		return combinationCalculator.canFinishWith(count, this.host.getTargetScore() - getTotalScore());
+		return combinationCalculator.canFinishWith(count, this.host.getTargetScore() - getAdditiveScore());
 	}
 	
 	public List<List<PointEvent>> calculateFinishingCombinations() {
 		int count = this.currentTurn.getRemainingThrows();
-		return combinationCalculator.calculateFinishingCombinations(count, this.host.getTargetScore() - getTotalScore());
+		return combinationCalculator.calculateFinishingCombinations(count, this.host.getTargetScore() - getAdditiveScore());
 	}
 	
 	@Override
@@ -119,6 +119,16 @@ public class X01Score implements Score {
 		}
 		
 		return result;
+	}
+	
+	@Override
+	public int getTotalScore() {
+		return getRemainingScore();
+	}
+
+	@Override
+	public int getThrownDarts() {
+		return getTotalDarts();
 	}
 	
 	private class Turn {
@@ -165,5 +175,5 @@ public class X01Score implements Score {
 		}
 		
 	}
-	
+
 }

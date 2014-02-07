@@ -22,7 +22,6 @@ import java.util.List;
 import spare.n52.yadarts.entity.Player;
 import spare.n52.yadarts.entity.PointEvent;
 import spare.n52.yadarts.games.AbstractGame;
-import spare.n52.yadarts.games.GameStatusUpdateListener;
 import spare.n52.yadarts.games.Score;
 
 /**
@@ -37,15 +36,13 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 	private List<Player> players;
 	private Player currentPlayer;
 	private X01Score currentScore;
-	private GameStatusUpdateListener gameListener;
 	private int rounds = 1;
 	private boolean playerFinished;
 	private boolean gameFinished;
 
-	public GenericX01Game(List<Player> players, int targetScore, GameStatusUpdateListener gl) {
+	public GenericX01Game(List<Player> players, int targetScore) {
 		this.targetScore = targetScore;
 		this.players = players;
-		this.gameListener = gl;
 		
 		for (Player player : players) {
 			playerScoreMap.put(player, new X01Score(this));
@@ -55,7 +52,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		this.currentScore = (X01Score) this.playerScoreMap.get(this.currentPlayer);
 		this.currentScore.startTurn();
 		
-		this.gameListener.roundStarted(this.rounds);
+		this.gameListener.onRoundStarted(this.rounds);
 		provideStatusUpdate();
 	}
 
@@ -74,7 +71,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 				return;
 			}
 			this.rounds++;
-			this.gameListener.roundStarted(this.rounds);
+			this.gameListener.onRoundStarted(this.rounds);
 			
 		}
 		
@@ -86,7 +83,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 	}
 
 	private void provideStatusUpdate() {
-		this.gameListener.onCurrentPlayerChanged(this.currentPlayer, this.currentScore.getRemainingScore());
+		this.gameListener.onCurrentPlayerChanged(this.currentPlayer, this.currentScore);
 		
 		this.currentScore.checkFinishingPossibility();
 	}
@@ -119,7 +116,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		
 		this.currentScore.invalidateLastThrow();
 		this.gameListener.onBounceOutPressed();
-		this.gameListener.remainingScoreForPlayer(this.currentPlayer, this.currentScore.getRemainingScore());
+		this.gameListener.onRemainingScoreForPlayer(this.currentPlayer, this.currentScore);
 	}
 
 	@Override
@@ -140,22 +137,22 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 	@Override
 	public void firePlayerFinishedEvent() {
 		this.playerFinished = true;
-		this.gameListener.playerFinished(this.currentPlayer);
+		this.gameListener.onPlayerFinished(this.currentPlayer);
 	}
 	
 	@Override
 	public void turnEnded() {
-		this.gameListener.onTurnFinished(this.currentPlayer, this.currentScore.getRemainingScore());
+		this.gameListener.onTurnFinished(this.currentPlayer, this.currentScore);
 	}
 	
 	@Override
 	public void bust(X01Score score) {
-		this.gameListener.onBust(this.currentPlayer, score.getRemainingScore());
+		this.gameListener.onBust(this.currentPlayer, score);
 	}
 	
 	@Override
 	public void provideRemainingScore() {
-		this.gameListener.remainingScoreForPlayer(this.currentPlayer, this.currentScore.getRemainingScore());
+		this.gameListener.onRemainingScoreForPlayer(this.currentPlayer, this.currentScore);
 	}
 
 	@Override
@@ -166,7 +163,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 	@Override
 	public void provideFinishingCombination(
 			List<List<PointEvent>> finishingCombinations) {
-		this.gameListener.provideFinishingCombination(finishingCombinations);
+		this.gameListener.onFinishingCombination(finishingCombinations);
 	}
 	
 }

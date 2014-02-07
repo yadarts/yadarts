@@ -39,17 +39,18 @@ public class LocalTestRuntime {
 	public static void main(String[] args) throws InitializationException, InterruptedException {
 		List<Player> players = preparePlayers(args);
 		
-		GenericX01Game x301Game = new GenericX01Game(players, 301, new GameStatusUpdateListener() {
+		GenericX01Game x301Game = new GenericX01Game(players, 301);
+		x301Game.registerGameListener(new GameStatusUpdateListener() {
 			
 			@Override
-			public void roundStarted(int rounds) {
+			public void onRoundStarted(int rounds) {
 				logger.info("+++++++++++++++++++");
 				logger.info("Round {} started!", rounds);
 				logger.info("+++++++++++++++++++");
 			}
 			
 			@Override
-			public void provideFinishingCombination(
+			public void onFinishingCombination(
 					List<List<PointEvent>> finishingCombinations) {
 				logger.info("Player can finished with the following combinations:");
 				
@@ -69,25 +70,25 @@ public class LocalTestRuntime {
 			}
 			
 			@Override
-			public void onCurrentPlayerChanged(Player currentPlayer, int remain) {
+			public void onCurrentPlayerChanged(Player currentPlayer, Score remain) {
 				logger.info("####################");
 				logger.info("It is {}'s turn", currentPlayer);
 			}
 			
 			@Override
-			public void onBust(Player currentPlayer, int remaining) {
+			public void onBust(Player currentPlayer, Score remaining) {
 				logger.info("{} busted!", currentPlayer);
 			}
 
 			@Override
-			public void onTurnFinished(Player finishedPlayer, int remainingScore) {
-				logger.info("Player {} finished the turn. Remaining points: {}", finishedPlayer, remainingScore);
+			public void onTurnFinished(Player finishedPlayer, Score remainingScore) {
+				logger.info("Player {} finished the turn. Remaining points: {}", finishedPlayer, remainingScore.getTotalScore());
 			}
 
 			@Override
-			public void remainingScoreForPlayer(Player currentPlayer,
-					int remainingScore) {
-				logger.info("Player {}'s remaining points: {}", currentPlayer, remainingScore);
+			public void onRemainingScoreForPlayer(Player currentPlayer,
+					Score remainingScore) {
+				logger.info("Player {}'s remaining points: {}", currentPlayer, remainingScore.getTotalScore());
 			}
 
 			@Override
@@ -96,7 +97,7 @@ public class LocalTestRuntime {
 			}
 
 			@Override
-			public void playerFinished(Player currentPlayer) {
+			public void onPlayerFinished(Player currentPlayer) {
 				logger.info("Player {} finished!!!!!!! You are a Dart god!", currentPlayer);
 			}
 

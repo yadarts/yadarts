@@ -16,7 +16,15 @@
  */
 package spare.n52.yadarts.games;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import spare.n52.yadarts.entity.InteractionEvent;
+import spare.n52.yadarts.entity.Player;
 import spare.n52.yadarts.entity.PointEvent;
 import spare.n52.yadarts.entity.UserCausedEvent;
 import spare.n52.yadarts.event.EventListener;
@@ -27,6 +35,10 @@ import spare.n52.yadarts.event.EventListener;
  * by defining abstract methods on specific events.
  */
 public abstract class AbstractGame implements Game, EventListener {
+	
+	private static final Logger logger = LoggerFactory.getLogger(AbstractGame.class);
+	protected GameStatusUpdateListener gameListener = new CascadingGameListener();
+	private ArrayList<GameStatusUpdateListener> listeners = new ArrayList<>();
 
 	@Override
 	public void receiveEvent(InteractionEvent event) {
@@ -91,5 +103,160 @@ public abstract class AbstractGame implements Game, EventListener {
 	 * @param event a common point hit
 	 */
 	protected abstract void processPointEvent(PointEvent event);
+	
+	
+	@Override
+	public synchronized void registerGameListener(GameStatusUpdateListener listener) {
+		this.listeners.add(listener);
+	}
+	
+	
+	private class CascadingGameListener implements GameStatusUpdateListener {
+
+		@Override
+		public synchronized void onFinishingCombination(
+				List<List<PointEvent>> finishingCombinations) {
+			for (GameStatusUpdateListener g : listeners) {
+				try {
+					g.onFinishingCombination(finishingCombinations);
+				} catch (RuntimeException e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}
+		}
+
+		@Override
+		public synchronized void onCurrentPlayerChanged(Player currentPlayer, Score score) {
+			for (GameStatusUpdateListener g : listeners) {
+				try {
+					g.onCurrentPlayerChanged(currentPlayer, score);
+				} catch (RuntimeException e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}			
+		}
+
+		@Override
+		public synchronized void onBust(Player currentPlayer, Score score) {
+			for (GameStatusUpdateListener g : listeners) {
+				try {
+					g.onBust(currentPlayer, score);
+				} catch (RuntimeException e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}				
+		}
+
+		@Override
+		public synchronized void onRoundStarted(int roundNumber) {
+			for (GameStatusUpdateListener g : listeners) {
+				try {
+					g.onRoundStarted(roundNumber);
+				} catch (RuntimeException e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}				
+		}
+
+		@Override
+		public synchronized void onTurnFinished(Player player, Score score) {
+			for (GameStatusUpdateListener g : listeners) {
+				try {
+					g.onTurnFinished(player, score);
+				} catch (RuntimeException e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}				
+		}
+
+		@Override
+		public synchronized void onRemainingScoreForPlayer(Player player, Score score) {
+			for (GameStatusUpdateListener g : listeners) {
+				try {
+					g.onRemainingScoreForPlayer(player, score);
+				} catch (RuntimeException e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}				
+		}
+
+		@Override
+		public synchronized void requestNextPlayerEvent() {
+			for (GameStatusUpdateListener g : listeners) {
+				try {
+					g.requestNextPlayerEvent();
+				} catch (RuntimeException e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}				
+		}
+
+		@Override
+		public synchronized void onPlayerFinished(Player player) {
+			for (GameStatusUpdateListener g : listeners) {
+				try {
+					g.onPlayerFinished(player);
+				} catch (RuntimeException e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}				
+		}
+
+		@Override
+		public synchronized void onGameFinished(Map<Player, Score> playerScoreMap) {
+			for (GameStatusUpdateListener g : listeners) {
+				try {
+					g.onGameFinished(playerScoreMap);
+				} catch (RuntimeException e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}				
+		}
+
+		@Override
+		public synchronized void onPointEvent(PointEvent event) {
+			for (GameStatusUpdateListener g : listeners) {
+				try {
+					g.onPointEvent(event);
+				} catch (RuntimeException e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}				
+		}
+
+		@Override
+		public synchronized void onNextPlayerPressed() {
+			for (GameStatusUpdateListener g : listeners) {
+				try {
+					g.onNextPlayerPressed();
+				} catch (RuntimeException e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}				
+		}
+
+		@Override
+		public synchronized void onBounceOutPressed() {
+			for (GameStatusUpdateListener g : listeners) {
+				try {
+					g.onBounceOutPressed();
+				} catch (RuntimeException e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}				
+		}
+
+		@Override
+		public synchronized void onDartMissedPressed() {
+			for (GameStatusUpdateListener g : listeners) {
+				try {
+					g.onDartMissedPressed();
+				} catch (RuntimeException e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}				
+		}
+		
+	}
 
 }
