@@ -22,33 +22,98 @@ import java.util.Map;
 import spare.n52.yadarts.entity.Player;
 import spare.n52.yadarts.entity.PointEvent;
 
+/**
+ * Components interested in status updates on a game
+ * can implement this interface and register themselves
+ * at {@link Game#}
+ */
 public interface GameStatusUpdateListener {
 
-	void provideFinishingCombination(
+	/**
+	 * provides a list of combinations a {@link Player}
+	 * can aim for in order to finish the game.
+	 * 
+	 * @param finishingCombinations
+	 */
+	void onFinishingCombination(
 			List<List<PointEvent>> finishingCombinations);
 
-	void onCurrentPlayerChanged(Player currentPlayer, int remainingScore);
+	/**
+	 * @param currentPlayer the new active player
+	 * @param score his current score
+	 */
+	void onCurrentPlayerChanged(Player currentPlayer, Score score);
 
-	void onBust(Player currentPlayer, int remainingScore);
+	/**
+	 * @param currentPlayer which player
+	 * @param score his score after the bust was applied
+	 */
+	void onBust(Player currentPlayer, Score score);
 
-	void roundStarted(int rounds);
+	/**
+	 * @param roundNumber the new round number
+	 */
+	void onRoundStarted(int roundNumber);
 
-	void onTurnFinished(Player finishedPlayer, int totalScore);
+	/**
+	 * called when a player finished his turn (= 3 throws)
+	 * 
+	 * @param player the player who finished the turn
+	 * @param score the score of the player
+	 */
+	void onTurnFinished(Player player, Score score);
 
-	void remainingScoreForPlayer(Player currentPlayer, int remainingScore);
+	/**
+	 * provides the remaining score for a player. This is normally
+	 * called after every throw.
+	 * 
+	 * @param player the player
+	 * @param score the score of the player
+	 */
+	void onRemainingScoreForPlayer(Player player, Score score);
 
+	/**
+	 * called whenever the board was hit, but "Next Player"
+	 * has not been pressed.
+	 */
 	void requestNextPlayerEvent();
 
-	void playerFinished(Player currentPlayer);
+	/**
+	 * one player finished the game. the turn still goes
+	 * on and other players can finish as well.
+	 * 
+	 * @param player
+	 */
+	void onPlayerFinished(Player player);
 
+	/**
+	 * called after the end of a turn in which a player
+	 * finished (see {@link #onPlayerFinished(Player)}
+	 * 
+	 * @param playerScoreMap scores of all player
+	 */
 	void onGameFinished(Map<Player, Score> playerScoreMap);
 	
+	/**
+	 * provides a generic event and its points.
+	 * 
+	 * @param event the hit
+	 */
 	void onPointEvent(PointEvent event);
 	
+	/**
+	 * next player button has been pressed
+	 */
 	void onNextPlayerPressed();
 	
+	/**
+	 * bounce out has been pressed
+	 */
 	void onBounceOutPressed();
 	
+	/**
+	 * dart missed has been pressed
+	 */
 	void onDartMissedPressed();
 
 }

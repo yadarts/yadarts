@@ -16,6 +16,26 @@
  */
 package spare.n52.yadarts.games;
 
+import spare.n52.yadarts.entity.Player;
+
+/**
+ * A generic Score interface for, representing
+ * the current status for one {@link Player}. 
+ */
 public interface Score {
 
+	/**
+	 * this may vary across game-specific Score implementations.
+	 * E.g. a X01 game shows the remaining points, a cricket game
+	 * shows the gathered points, etc.
+	 * 
+	 * @return the total score for the player
+	 */
+	public int getTotalScore();
+	
+	/**
+	 * @return the number of darts the player has thrown
+	 */
+	public int getThrownDarts();
+	
 }

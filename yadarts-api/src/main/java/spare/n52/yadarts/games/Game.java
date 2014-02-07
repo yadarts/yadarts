@@ -18,4 +18,6 @@ package spare.n52.yadarts.games;
 
 public interface Game {
 
+	public void registerGameListener(GameStatusUpdateListener listener);
+	
 }
