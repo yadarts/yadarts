@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import spare.n52.yadarts.entity.InteractionEvent;
+import spare.n52.yadarts.entity.UserCausedEvent;
+import spare.n52.yadarts.entity.UserCausedEvent.Type;
 import spare.n52.yadarts.entity.impl.ButtonEvent;
 import spare.n52.yadarts.entity.impl.HitEvent;
 import spare.n52.yadarts.event.EventListener;
@@ -52,30 +54,29 @@ public class DummyBoardEventProducer implements EventProducer {
 		eventQueue.add(HitEvent.tripleHit(20));
 		eventQueue.add(ButtonEvent.nextPlayer());
 		
-		eventQueue.add(HitEvent.singleHitInner(1));
-		eventQueue.add(HitEvent.singleHitInner(20));
-		eventQueue.add(HitEvent.singleHitInner(5));
+		eventQueue.add(HitEvent.singleHitInner(15));
+		eventQueue.add(HitEvent.singleHitInner(15));
+		eventQueue.add(HitEvent.singleHitInner(15));
 		eventQueue.add(ButtonEvent.nextPlayer());
 		
-		eventQueue.add(HitEvent.tripleHit(20));
-		eventQueue.add(HitEvent.tripleHit(17));
-		eventQueue.add(HitEvent.doubleHit(5));
+		eventQueue.add(HitEvent.doubleHit(25));
+		eventQueue.add(HitEvent.doubleHit(25));
+		eventQueue.add(HitEvent.doubleHit(25));
 		eventQueue.add(ButtonEvent.nextPlayer());
 		
-		eventQueue.add(HitEvent.singleHitInner(1));
-		eventQueue.add(ButtonEvent.bounceOut());
-		eventQueue.add(HitEvent.singleHitInner(19));
-		eventQueue.add(ButtonEvent.dartMissed());
+		eventQueue.add(HitEvent.singleHitInner(25));
+		eventQueue.add(HitEvent.singleHitInner(25));
+		eventQueue.add(HitEvent.singleHitInner(25));
 		eventQueue.add(ButtonEvent.nextPlayer());
 		
-		eventQueue.add(HitEvent.tripleHit(19));
-		eventQueue.add(HitEvent.singleHitInner(20));
-		eventQueue.add(HitEvent.singleHitInner(5));
+		eventQueue.add(HitEvent.singleHitOuter(19));
+		eventQueue.add(HitEvent.singleHitOuter(19));
+		eventQueue.add(HitEvent.singleHitOuter(19));
 		eventQueue.add(ButtonEvent.nextPlayer());
 		
-		eventQueue.add(HitEvent.singleHitOuter(20));
 		eventQueue.add(HitEvent.doubleHit(17));
-		eventQueue.add(HitEvent.doubleHit(5));
+		eventQueue.add(HitEvent.doubleHit(17));
+		eventQueue.add(HitEvent.doubleHit(17));
 		eventQueue.add(ButtonEvent.nextPlayer());
 		
 		eventQueue.add(HitEvent.singleHitInner(8));
@@ -122,7 +123,12 @@ public class DummyBoardEventProducer implements EventProducer {
 						
 						sendEvent(ie);
 						try {
-							Thread.sleep(1000);
+							if (ie instanceof UserCausedEvent && ((UserCausedEvent) ie).getType() == Type.NEXT_PLAYER) {
+								Thread.sleep(5000);
+							}
+							else {
+								Thread.sleep(2000);
+							}
 						} catch (InterruptedException e) {
 							logger.warn(e.getMessage(), e);
 						}

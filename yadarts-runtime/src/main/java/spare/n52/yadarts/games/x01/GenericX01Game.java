@@ -81,6 +81,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		this.currentScore.startTurn();
 		
 		provideStatusUpdate();
+		this.gameListener.onNextPlayerPressed();
 	}
 
 	private List<Player> determineWinner() {
