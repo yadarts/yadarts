@@ -163,8 +163,10 @@ public class X01Score implements Score {
 		}
 
 		public void invalidateLastThrow() {
-			throwz.remove(throwz.size()-1);
-			throwz.add(0);
+			if (throwz.size() > 0) {
+				throwz.remove(throwz.size()-1);
+				throwz.add(0);
+			}
 		}
 
 		public int getScore() {
