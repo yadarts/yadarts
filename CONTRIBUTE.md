@@ -1,4 +1,4 @@
-This is the contribute.md of the project [yadarts](https://github.com/matthesrieke/yadarts). Great to have you here! Here are a few ways you can help!
+This is the contribute.md of the project [yadarts](https://github.com/yadarts/yadarts). Great to have you here! Here are a few ways you can help!
 
 # Contribute.md
 
@@ -30,7 +30,7 @@ Don't get discouraged! We estimate that the response time from the maintainers i
 
 # Bug triage
 
-You can help report bugs by filing them here: <https://github.com/matthesrieke/yadarts/issues>
+You can help report bugs by filing them here: <https://github.com/yadarts/yadarts/issues>
 
 * Don't forget to check the existing ones first
 * Look at existing bugs and help us understand if the bug is reproducible. Is it reproducible in other environments (OS, JVM, application servers)? What are the steps to reproduce? 
