@@ -16,6 +16,8 @@
  */
 package spare.n52.yadarts.games;
 
+import java.util.Date;
+
 import spare.n52.yadarts.entity.Player;
 
 /**
@@ -38,4 +40,18 @@ public interface Score {
 	 */
 	public int getThrownDarts();
 	
+	/**
+	 * @return the time when the player finished the game
+	 */
+	public Date getDateTime();
+
+	/**
+	 * @return the total amount of time the player took for his turns
+	 */
+	public int getTotalTime();
+
+	/**
+	 * @return the player for this score
+	 */
+	public Player getPlayer();
 }

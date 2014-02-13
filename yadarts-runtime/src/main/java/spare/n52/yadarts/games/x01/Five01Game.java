@@ -14,12 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package spare.n52.yadarts.games;
+package spare.n52.yadarts.games.x01;
 
-public interface Game {
+import java.util.List;
 
-	public void registerGameListener(GameStatusUpdateListener listener);
+import spare.n52.yadarts.entity.Player;
+import spare.n52.yadarts.games.AnnotatedGame;
 
-	public String getShortName();
-	
+@AnnotatedGame(highscorePersistentName="501Game")
+public class Five01Game extends GenericX01Game {
+
+	public Five01Game(List<Player> players) {
+		super(players, 501);
+	}
+
 }

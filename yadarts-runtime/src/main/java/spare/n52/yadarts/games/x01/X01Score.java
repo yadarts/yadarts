@@ -17,8 +17,10 @@
 package spare.n52.yadarts.games.x01;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import spare.n52.yadarts.entity.Player;
 import spare.n52.yadarts.entity.PointEvent;
 import spare.n52.yadarts.games.Score;
 
@@ -28,6 +30,7 @@ public class X01Score implements Score {
 	private Turn currentTurn;
 	public CombinationCalculator combinationCalculator = new CombinationCalculator();
 	private X01Host host;
+	private Date time;
 
 	public X01Score(X01Host h) {
 		this.host = h;
@@ -187,6 +190,27 @@ public class X01Score implements Score {
 			return this.busted || this.throwz.size() == 3;
 		}
 		
+	}
+
+	@Override
+	public Date getDateTime() {
+		return this.time;
+	}
+	
+	
+	public void setTime(Date time) {
+		this.time = time;
+	}
+
+	@Override
+	public int getTotalTime() {
+		return 0;
+	}
+
+	@Override
+	public Player getPlayer() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

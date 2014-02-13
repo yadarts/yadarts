@@ -16,10 +16,12 @@
  */
 package spare.n52.yadarts.games;
 
-public interface Game {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-	public void registerGameListener(GameStatusUpdateListener listener);
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AnnotatedGame {
 
-	public String getShortName();
+	String highscorePersistentName();
 	
 }

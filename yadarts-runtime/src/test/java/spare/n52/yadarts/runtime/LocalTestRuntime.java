@@ -39,7 +39,7 @@ public class LocalTestRuntime {
 	public static void main(String[] args) throws InitializationException, InterruptedException {
 		List<Player> players = preparePlayers(args);
 		
-		GenericX01Game x301Game = new GenericX01Game(players, 301);
+		GenericX01Game x301Game = GenericX01Game.create(players, 301);
 		x301Game.registerGameListener(new GameStatusUpdateListener() {
 			
 			@Override

@@ -17,18 +17,21 @@
 package spare.n52.yadarts.games.x01;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import spare.n52.yadarts.entity.Player;
 import spare.n52.yadarts.entity.PointEvent;
 import spare.n52.yadarts.games.AbstractGame;
+import spare.n52.yadarts.games.AnnotatedGame;
 import spare.n52.yadarts.games.Score;
 
 /**
  * Class represents the workflow of a generic X01 game.
  * Currently, double/triple-in/out is not supported.
  */
+@AnnotatedGame(highscorePersistentName="X01Game")
 public class GenericX01Game extends AbstractGame implements X01Host {
 	
 	private HashMap<Player, Score> playerScoreMap = new HashMap<>();
@@ -40,8 +43,21 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 	private int rounds = 1;
 	private boolean playerFinished;
 	private boolean gameFinished;
+	
+	public static GenericX01Game create(List<Player> players, int targetScore) {
+		switch (targetScore) {
+		case 301:
+			return new Three01Game(players);
+		case 501:
+			return new Five01Game(players);
+		case 701:
+			return new Seven01Game(players);			
+		default:
+			return new GenericX01Game(players, targetScore);
+		}
+	}
 
-	public GenericX01Game(List<Player> players, int targetScore) {
+	protected GenericX01Game(List<Player> players, int targetScore) {
 		this.targetScore = targetScore;
 		this.players = players;
 		
@@ -155,6 +171,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 	@Override
 	public void firePlayerFinishedEvent() {
 		this.playerFinished = true;
+		this.currentScore.setTime(new Date());
 		this.gameListener.onPlayerFinished(this.currentPlayer);
 	}
 	
@@ -187,6 +204,11 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 	@Override
 	public void requestNextPlayerEvent() {
 		this.gameListener.requestNextPlayerEvent();
+	}
+
+	@Override
+	public String getShortName() {
+		return Integer.toString(targetScore).concat("-Game");
 	}
 	
 }
