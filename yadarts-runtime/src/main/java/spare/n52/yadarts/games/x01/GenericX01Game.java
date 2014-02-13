@@ -92,6 +92,8 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 			
 		}
 		
+		this.currentScore.endTurn();
+		
 		this.currentPlayer = this.players.get(currentPlayerIndex);
 		this.currentScore = (X01Score) this.playerScoreMap.get(currentPlayer);
 		this.currentScore.startTurn();
