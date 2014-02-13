@@ -35,6 +35,8 @@ import spare.n52.yadarts.usb.handler.EventHandler;
 public class USBEventProducer implements EventProducer, EmprexRawDataListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(USBEventProducer.class);
+
+	protected static final long MIN_TIME_DELTA = 100;
 	
 	private List<EventListener> listeners = new ArrayList<>();
 	private SimplifiedEmprexUSBDriver driver;
@@ -76,6 +78,9 @@ public class USBEventProducer implements EventProducer, EmprexRawDataListener {
 		final int[] rawData = convertToIntArray(dataBuffer, byteCount);
 		executor.submit(new Runnable() {
 			
+			private InteractionEvent previous;
+			private long previousEventTime;
+
 			@Override
 			public void run() {
 				InteractionEvent event = USBEventProducer.this.handler.createEvent(rawData);
@@ -91,11 +96,22 @@ public class USBEventProducer implements EventProducer, EmprexRawDataListener {
 					 * event in order. fire the event after the
 					 * release was received.
 					 */
-					if (event instanceof ConfirmationEvent) {
+					
+					if (event instanceof ConfirmationEvent && pending != null) {
 						outgoing = pending;
 						pending = null;
+						previous = outgoing;
+						previousEventTime = event.getTimestamp();
 					} 
 					else {
+						if (event.hasSameContent(previous) 
+								&& (event.getTimestamp() - previousEventTime) < MIN_TIME_DELTA) {
+							/*
+							 * probably a ghost event
+							 */
+							return;
+						}
+						
 						pending = event;
 						return;
 					}

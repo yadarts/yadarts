@@ -27,4 +27,6 @@ public interface InteractionEvent {
 	 */
 	public long getTimestamp();
 
+	public boolean hasSameContent(InteractionEvent previous);
+
 }

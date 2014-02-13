@@ -16,6 +16,7 @@
  */
 package spare.n52.yadarts.entity.impl;
 
+import spare.n52.yadarts.entity.InteractionEvent;
 import spare.n52.yadarts.entity.PointEvent;
 
 public class HitEvent implements PointEvent {
@@ -81,6 +82,19 @@ public class HitEvent implements PointEvent {
 		default:
 			return String.format("%d - %s (%s)", this.base, this.outerRing ? "outer" : "inner", this.time);
 		}
+	}
+	
+	@Override
+	public boolean hasSameContent(InteractionEvent obj) {
+		if (obj == null || !(obj instanceof HitEvent)) {
+			return false;
+		}
+
+		HitEvent that = (HitEvent) obj;
+		
+		return this.getBaseNumber() == that.getBaseNumber() &&
+				this.getMultiplier() == that.getMultiplier() &&
+				this.isOuterRing() == that.isOuterRing();
 	}
 	
 	public static PointEvent singleHitOuter(int number) {
