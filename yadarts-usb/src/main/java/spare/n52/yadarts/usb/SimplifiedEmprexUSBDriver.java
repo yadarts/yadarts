@@ -164,6 +164,9 @@ public class SimplifiedEmprexUSBDriver {
 	}
 
 	public void shutdown() throws IOException {
+		if (driverThread == null) {
+			return;
+		}
 		try {
 			driverThread.setRunning(false);
 			this.pipe.getUsbEndpoint().getUsbInterface().release();

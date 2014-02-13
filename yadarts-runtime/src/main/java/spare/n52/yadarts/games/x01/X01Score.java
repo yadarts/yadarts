@@ -31,9 +31,11 @@ public class X01Score implements Score {
 	public CombinationCalculator combinationCalculator = new CombinationCalculator();
 	private X01Host host;
 	private Date time;
+	private Player player;
 
-	public X01Score(X01Host h) {
+	public X01Score(X01Host h, Player player) {
 		this.host = h;
+		this.player = player;
 	}
 	
 	public int getRemainingScore() {
@@ -48,6 +50,9 @@ public class X01Score implements Score {
 		this.currentTurn.invalidateLastThrow();
 	}
 	
+	/**
+	 * @return true if a player finished the whole game
+	 */
 	public boolean playerFinished() {
 		return this.getRemainingScore() == 0;
 	}
@@ -209,8 +214,15 @@ public class X01Score implements Score {
 
 	@Override
 	public Player getPlayer() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.player;
+	}
+
+	public void endTurn() {
+		if (!playerFinished() && !currentTurn.isClosed()) {
+			while (currentTurn.hasRemainingThrows()) {
+				currentTurn.addThrow(0);
+			}
+		}
 	}
 
 }

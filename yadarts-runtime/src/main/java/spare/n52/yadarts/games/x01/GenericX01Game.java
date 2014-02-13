@@ -62,7 +62,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		this.players = players;
 		
 		for (Player player : players) {
-			playerScoreMap.put(player, new X01Score(this));
+			playerScoreMap.put(player, new X01Score(this, player));
 		}
 		
 		this.currentPlayer = this.players.get(0);
@@ -91,6 +91,8 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 			this.gameListener.onRoundStarted(this.rounds);
 			
 		}
+		
+		this.currentScore.endTurn();
 		
 		this.currentPlayer = this.players.get(currentPlayerIndex);
 		this.currentScore = (X01Score) this.playerScoreMap.get(currentPlayer);
