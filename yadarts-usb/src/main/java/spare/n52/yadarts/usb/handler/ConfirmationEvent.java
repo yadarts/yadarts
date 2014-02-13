@@ -31,4 +31,9 @@ public class ConfirmationEvent implements InteractionEvent {
 		return this.timestamp;
 	}
 
+	@Override
+	public boolean hasSameContent(InteractionEvent previous) {
+		return true;
+	}
+
 }

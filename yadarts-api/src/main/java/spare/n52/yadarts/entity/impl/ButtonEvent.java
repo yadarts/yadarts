@@ -16,6 +16,7 @@
  */
 package spare.n52.yadarts.entity.impl;
 
+import spare.n52.yadarts.entity.InteractionEvent;
 import spare.n52.yadarts.entity.UserCausedEvent;
 
 public class ButtonEvent implements UserCausedEvent {
@@ -53,6 +54,14 @@ public class ButtonEvent implements UserCausedEvent {
 	
 	public static UserCausedEvent nextPlayer() {
 		return new ButtonEvent(Type.NEXT_PLAYER);
+	}
+
+	@Override
+	public boolean hasSameContent(InteractionEvent previous) {
+		if (previous == null || !(previous instanceof ButtonEvent)) {
+			return false;
+		}
+		return this.getType() == ((ButtonEvent) previous).getType();
 	}
 
 }
