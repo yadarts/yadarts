@@ -24,4 +24,6 @@ public @interface AnnotatedGame {
 
 	String highscorePersistentName();
 	
+	String displayName();
+	
 }

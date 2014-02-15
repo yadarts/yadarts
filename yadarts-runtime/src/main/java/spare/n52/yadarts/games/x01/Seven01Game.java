@@ -21,7 +21,7 @@ import java.util.List;
 import spare.n52.yadarts.entity.Player;
 import spare.n52.yadarts.games.AnnotatedGame;
 
-@AnnotatedGame(highscorePersistentName="701Game")
+@AnnotatedGame(highscorePersistentName="701Game", displayName="701")
 public class Seven01Game extends GenericX01Game {
 
 	public Seven01Game(List<Player> players) {

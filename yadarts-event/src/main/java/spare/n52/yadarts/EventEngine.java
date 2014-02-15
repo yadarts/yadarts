@@ -94,7 +94,9 @@ public class EventEngine implements EventListener {
 	 * free all initialized resources. call if you would like
 	 * to stop the {@link EventProducer} instance from generacting events
 	 */
-	public void shutdown() {
+	public synchronized void shutdown() {
+		this.running = false;
+		
 		if (this.producer != null) {
 			try {
 				this.producer.removeEventListener(this);
@@ -103,6 +105,7 @@ public class EventEngine implements EventListener {
 				logger.warn(e.getMessage(), e);
 			}
 		}
+		
 	}
 
 	private EventProducer initializeProducer() throws InitializationException {
