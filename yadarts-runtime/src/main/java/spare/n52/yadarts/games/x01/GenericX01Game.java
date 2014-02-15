@@ -31,7 +31,7 @@ import spare.n52.yadarts.games.Score;
  * Class represents the workflow of a generic X01 game.
  * Currently, double/triple-in/out is not supported.
  */
-@AnnotatedGame(highscorePersistentName="X01Game")
+@AnnotatedGame(highscorePersistentName="X01Game", displayName="Generic X01")
 public class GenericX01Game extends AbstractGame implements X01Host {
 	
 	private HashMap<Player, Score> playerScoreMap = new HashMap<>();
