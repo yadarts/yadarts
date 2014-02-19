@@ -59,9 +59,9 @@ public class DummyBoardEventProducer implements EventProducer {
 		eventQueue.add(HitEvent.singleHitInner(15));
 		eventQueue.add(ButtonEvent.nextPlayer());
 		
-		eventQueue.add(HitEvent.doubleHit(25));
-		eventQueue.add(HitEvent.doubleHit(25));
-		eventQueue.add(HitEvent.doubleHit(25));
+		eventQueue.add(HitEvent.tripleHit(20));
+		eventQueue.add(HitEvent.tripleHit(17));
+		eventQueue.add(HitEvent.doubleHit(5));
 		eventQueue.add(ButtonEvent.nextPlayer());
 		
 		eventQueue.add(HitEvent.singleHitInner(25));
@@ -124,10 +124,10 @@ public class DummyBoardEventProducer implements EventProducer {
 						sendEvent(ie);
 						try {
 							if (ie instanceof UserCausedEvent && ((UserCausedEvent) ie).getType() == Type.NEXT_PLAYER) {
-								Thread.sleep(5000);
+								Thread.sleep(2000);
 							}
 							else {
-								Thread.sleep(2000);
+								Thread.sleep(1000);
 							}
 						} catch (InterruptedException e) {
 							logger.warn(e.getMessage(), e);
