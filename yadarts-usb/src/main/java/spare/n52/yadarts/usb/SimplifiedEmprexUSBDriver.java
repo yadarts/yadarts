@@ -211,6 +211,12 @@ public class SimplifiedEmprexUSBDriver {
 					if (running) {
 						continue;
 					}
+				} catch (RuntimeException e) {
+					logger.warn(e.getMessage());
+					if (running) {
+						logger.info("Restarting USB handler thread.");
+						restartConnection();
+					}
 				}
 
 				if (running) {
@@ -220,7 +226,21 @@ public class SimplifiedEmprexUSBDriver {
 			}
 		}
 
-		public void setRunning(boolean r) throws UsbException {
+		private synchronized void restartConnection() {
+			try {
+				SimplifiedEmprexUSBDriver.this.shutdown();
+			} catch (IOException e) {
+				logger.warn(e.getMessage());
+			}
+			
+			try {
+				SimplifiedEmprexUSBDriver.this.start();
+			} catch (IOException e) {
+				logger.warn(e.getMessage());
+			}
+		}
+
+		public synchronized void setRunning(boolean r) throws UsbException {
 			running = r;
 			if (!r) {
 				pipe.abortAllSubmissions();
