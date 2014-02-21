@@ -144,7 +144,7 @@ public class SimplifiedEmprexUSBDriver {
 					"Could not open the desired endpoint of the device", e);
 		}
 
-		driverThread = new EmprexCommunicationThread(pipe);
+		driverThread = new EmprexCommunicationThread();
 		Thread t = new Thread(driverThread);
 		t.start();
 	}
@@ -168,8 +168,13 @@ public class SimplifiedEmprexUSBDriver {
 			return;
 		}
 		try {
-			driverThread.setRunning(false);
-			this.pipe.getUsbEndpoint().getUsbInterface().release();
+			driverThread.shutdown();
+			
+			if (this.pipe != null && this.pipe.getUsbEndpoint() != null
+					&& this.pipe.getUsbEndpoint().getUsbInterface() != null) {
+				this.pipe.getUsbEndpoint().getUsbInterface().release();	
+			}
+			
 		} catch (UsbNotActiveException | UsbNotOpenException
 				| UsbDisconnectedException | UsbException e) {
 			throw new IOException(e);
@@ -183,10 +188,8 @@ public class SimplifiedEmprexUSBDriver {
 	public class EmprexCommunicationThread implements Runnable {
 
 		private boolean running = true;
-		private UsbPipe thePipe;
 
-		public EmprexCommunicationThread(UsbPipe pipe) {
-			this.thePipe = pipe;
+		public EmprexCommunicationThread() {
 		}
 
 		public void run() {
@@ -202,12 +205,19 @@ public class SimplifiedEmprexUSBDriver {
 					/*
 					 * blocking call!
 					 */
-					if (thePipe.isOpen() && thePipe.isActive()) {
-						byteCount = thePipe.syncSubmit(buffer);
+					if (pipe.isOpen() && pipe.isActive()) {
+						byteCount = pipe.syncSubmit(buffer);
 					}
 				} catch (UsbException e) {
-					logger.debug("Exception in Usb communication: {}",
-							e.getMessage());
+					/*
+					 * a timeout error occurs when no data has been
+					 * received in the specified timeout
+					 */
+					if (!e.getMessage().contains("LIBUSB_ERROR_TIMEOUT")) {
+						logger.warn("Exception in Usb communication: {}",
+								e.getMessage());	
+					}
+					
 					if (running) {
 						continue;
 					}
@@ -240,12 +250,13 @@ public class SimplifiedEmprexUSBDriver {
 			}
 		}
 
-		public synchronized void setRunning(boolean r) throws UsbException {
-			running = r;
-			if (!r) {
+		public synchronized void shutdown() throws UsbException {
+			running = false;
+			if (pipe.isOpen()) {
 				pipe.abortAllSubmissions();
 				pipe.close();
 			}
+			
 		}
 
 	}
