@@ -146,6 +146,7 @@ public class SimplifiedEmprexUSBDriver {
 
 		driverThread = new EmprexCommunicationThread();
 		Thread t = new Thread(driverThread);
+		t.setDaemon(true);
 		t.start();
 	}
 
