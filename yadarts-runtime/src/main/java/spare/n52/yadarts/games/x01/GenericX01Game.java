@@ -58,6 +58,8 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 	}
 
 	protected GenericX01Game(List<Player> players, int targetScore) {
+		super.setPlayers(players);
+		
 		this.targetScore = targetScore;
 		this.players = players;
 		

@@ -75,7 +75,7 @@ public class EventEngine implements EventListener {
 	 */
 	public synchronized void start() throws InitializationException, AlreadyRunningException {
 		if (this.running) {
-			throw new AlreadyRunningException();
+			throw new AlreadyRunningException("EventEngine already running!");
 		}
 		
 		this.producer = initializeProducer();
