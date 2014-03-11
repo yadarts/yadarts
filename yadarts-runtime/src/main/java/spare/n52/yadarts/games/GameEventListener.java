@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package spare.n52.yadarts;
+package spare.n52.yadarts.games;
 
-public class AlreadyRunningException extends Exception {
-
-	public AlreadyRunningException(String string) {
-		super(string);
-	}
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public interface GameEventListener {
+	
+	public void onGameStarted(AbstractGame game);
+	
+	public void onGameFinished(AbstractGame game);
+	
+	public void onGamePaused(AbstractGame game);
+	
+	public void onGameResumed(AbstractGame game);
 
 }

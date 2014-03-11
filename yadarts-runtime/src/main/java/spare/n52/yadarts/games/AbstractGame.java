@@ -17,6 +17,7 @@
 package spare.n52.yadarts.games;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,11 @@ public abstract class AbstractGame implements Game, EventListener {
 	
 	private static final Logger logger = LoggerFactory.getLogger(AbstractGame.class);
 	protected GameStatusUpdateListener gameListener = new CascadingGameListener();
-	private ArrayList<GameStatusUpdateListener> listeners = new ArrayList<>();
+	private List<GameStatusUpdateListener> listeners = new ArrayList<>();
+	private Map<Player, Score> scores = new HashMap<>();
+	private List<Player> players;
+	private List<Player> winners;
+	private Map<Player, Score> finalScores;
 
 	@Override
 	public void receiveEvent(InteractionEvent event) {
@@ -110,7 +115,33 @@ public abstract class AbstractGame implements Game, EventListener {
 		this.listeners.add(listener);
 	}
 	
+	private void setScore(Player p, Score s) {
+		this.scores.put(p, s);
+	}
 	
+	public Map<Player, Score> getScores() {
+		return scores;
+	}
+
+	public List<Player> getWinners() {
+		return winners;
+	}
+
+	public Map<Player, Score> getFinalScores() {
+		return finalScores;
+	}
+	
+
+	public List<Player> getPlayers() {
+		return players;
+	}
+
+	public void setPlayers(List<Player> players) {
+		this.players = players;
+	}
+
+
+
 	private class CascadingGameListener implements GameStatusUpdateListener {
 
 		@Override
@@ -127,6 +158,7 @@ public abstract class AbstractGame implements Game, EventListener {
 
 		@Override
 		public synchronized void onCurrentPlayerChanged(Player currentPlayer, Score score) {
+			setScore(currentPlayer, score);
 			for (GameStatusUpdateListener g : listeners) {
 				try {
 					g.onCurrentPlayerChanged(currentPlayer, score);
@@ -138,6 +170,7 @@ public abstract class AbstractGame implements Game, EventListener {
 
 		@Override
 		public synchronized void onBust(Player currentPlayer, Score score) {
+			setScore(currentPlayer, score);
 			for (GameStatusUpdateListener g : listeners) {
 				try {
 					g.onBust(currentPlayer, score);
@@ -160,6 +193,7 @@ public abstract class AbstractGame implements Game, EventListener {
 
 		@Override
 		public synchronized void onTurnFinished(Player player, Score score) {
+			setScore(player, score);
 			for (GameStatusUpdateListener g : listeners) {
 				try {
 					g.onTurnFinished(player, score);
@@ -171,6 +205,7 @@ public abstract class AbstractGame implements Game, EventListener {
 
 		@Override
 		public synchronized void onRemainingScoreForPlayer(Player player, Score score) {
+			setScore(player, score);
 			for (GameStatusUpdateListener g : listeners) {
 				try {
 					g.onRemainingScoreForPlayer(player, score);
@@ -204,6 +239,9 @@ public abstract class AbstractGame implements Game, EventListener {
 
 		@Override
 		public synchronized void onGameFinished(Map<Player, Score> playerScoreMap, List<Player> winners) {
+			AbstractGame.this.winners = winners;
+			AbstractGame.this.finalScores = playerScoreMap;
+			
 			for (GameStatusUpdateListener g : listeners) {
 				try {
 					g.onGameFinished(playerScoreMap, winners);
