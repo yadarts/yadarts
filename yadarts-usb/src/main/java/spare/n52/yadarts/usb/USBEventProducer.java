@@ -36,7 +36,7 @@ public class USBEventProducer implements EventProducer, EmprexRawDataListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(USBEventProducer.class);
 
-	protected static final long MIN_TIME_DELTA = 100;
+	protected static final long MIN_TIME_DELTA = 250;
 	
 	private List<EventListener> listeners = new ArrayList<>();
 	private SimplifiedEmprexUSBDriver driver;
@@ -44,6 +44,8 @@ public class USBEventProducer implements EventProducer, EmprexRawDataListener {
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	protected InteractionEvent pending;
+	private InteractionEvent previous;
+	private long previousEventTime;
 	
 	public USBEventProducer() {
 		initHandlers();
@@ -78,9 +80,6 @@ public class USBEventProducer implements EventProducer, EmprexRawDataListener {
 		final int[] rawData = convertToIntArray(dataBuffer, byteCount);
 		executor.submit(new Runnable() {
 			
-			private InteractionEvent previous;
-			private long previousEventTime;
-
 			@Override
 			public void run() {
 				InteractionEvent event = USBEventProducer.this.handler.createEvent(rawData);
@@ -97,13 +96,19 @@ public class USBEventProducer implements EventProducer, EmprexRawDataListener {
 					 * release was received.
 					 */
 					
-					if (event instanceof ConfirmationEvent && pending != null) {
-						outgoing = pending;
-						pending = null;
-						previous = outgoing;
-						previousEventTime = event.getTimestamp();
+					if (event instanceof ConfirmationEvent) {
+						if (pending != null) {
+							outgoing = pending;
+							pending = null;
+							previous = outgoing;
+							previousEventTime = outgoing.getTimestamp();	
+						}
+						else {
+							return;
+						}
 					} 
 					else {
+						logger.info("new hit event: "+event+"; prev: "+previous+"; delta: "+(event.getTimestamp() - previousEventTime));
 						if (event.hasSameContent(previous) 
 								&& (event.getTimestamp() - previousEventTime) < MIN_TIME_DELTA) {
 							/*
