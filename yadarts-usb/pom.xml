@@ -40,8 +40,12 @@
 			<artifactId>yadarts-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.ailis.usb4java</groupId>
+			<groupId>org.usb4java</groupId>
 			<artifactId>usb4java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.usb4java</groupId>
+			<artifactId>usb4java-javax</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
