@@ -25,6 +25,10 @@ import java.util.concurrent.ThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import spare.n52.yadarts.AlreadyRunningException;
+import spare.n52.yadarts.EventEngine;
+import spare.n52.yadarts.InitializationException;
+
 public class GameEventBus {
 	
 	private static final Logger logger = LoggerFactory.getLogger(GameEventBus.class);
@@ -40,6 +44,8 @@ public class GameEventBus {
 	});
 	
 	protected List<GameEventListener> listeners = new ArrayList<>();
+
+	private AbstractGame activeGame;
 	
 	public static synchronized GameEventBus instance() {
 		if (instance == null) {
@@ -49,7 +55,14 @@ public class GameEventBus {
 		return instance;
 	}
 	
-	public void startGame(final AbstractGame game) {
+	public void startGame(final AbstractGame game) throws GameAlreadyActiveException {
+		synchronized (this) {
+			if (this.activeGame != null) {
+				throw new GameAlreadyActiveException();
+			}
+			this.activeGame = game;
+		}
+		
 		this.executor.submit(new Runnable() {
 			
 			@Override
@@ -63,7 +76,16 @@ public class GameEventBus {
 							logger.warn(e.getMessage());
 							logger.debug(e.getMessage(), e);
 						}
-					}					
+					}
+
+					try {
+						EventEngine engine = EventEngine.instance();
+						engine.registerListener(game);
+						engine.start();
+					} catch (InitializationException | AlreadyRunningException e) {
+						logger.warn(e.getMessage(), e);
+					}
+					
 				}
 			}
 		});
@@ -73,7 +95,15 @@ public class GameEventBus {
 		this.listeners.add(l);
 	}
 
-	public void endGame(final AbstractGame game) {
+	public void endGame(final AbstractGame game) throws NoGameActiveException {
+		synchronized (this) {
+			if (this.activeGame == null || this.activeGame != game) {
+				throw new NoGameActiveException();
+			}
+			
+			this.activeGame = null;
+		}
+		
 		this.executor.submit(new Runnable() {
 			
 			@Override
@@ -87,10 +117,50 @@ public class GameEventBus {
 							logger.warn(e.getMessage());
 							logger.debug(e.getMessage(), e);
 						}
-					}					
+					}
+					
+					try {
+						EventEngine engine = EventEngine.instance();
+						engine.shutdown();
+					} catch (InitializationException e) {
+						logger.warn(e.getMessage());
+						logger.debug(e.getMessage(), e);
+					}
+					
 				}
 			}
 		});		
+	}
+	
+	public void undoEvent() {
+		AbstractGame game = resolveGame();
+		
+		if (game == null) {
+			return;
+		}
+		
+		game.undoEvent();
+	}
+	
+	public void redoEvent() {
+		AbstractGame game = resolveGame();
+		
+		if (game == null) {
+			return;
+		}
+		
+		
+	}
+
+	private AbstractGame resolveGame() {
+		synchronized (this) {
+			if (this.activeGame != null) {
+				return this.activeGame;
+			}
+			else {
+				return null;
+			}
+		}
 	}
 	
 }
