@@ -297,4 +297,16 @@ public abstract class AbstractGame implements Game, EventListener {
 		
 	}
 
+
+	/**
+	 * an implementation shall undo the last event (hit or user-caused)
+	 * if there was an event
+	 */
+	public abstract void undoEvent();
+	
+	/**
+	 * an implementation shall redo the last undone event (hit or user-caused)
+	 * if there was one
+	 */
+	public abstract void redoEvent();
 }
