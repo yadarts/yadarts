@@ -21,6 +21,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import spare.n52.yadarts.entity.Player;
 import spare.n52.yadarts.entity.PointEvent;
 import spare.n52.yadarts.games.AbstractGame;
@@ -33,6 +36,8 @@ import spare.n52.yadarts.games.Score;
  */
 @AnnotatedGame(highscorePersistentName="X01Game", displayName="Generic X01")
 public class GenericX01Game extends AbstractGame implements X01Host {
+	
+	private static final Logger logger = LoggerFactory.getLogger(GenericX01Game.class);
 	
 	private HashMap<Player, Score> playerScoreMap = new HashMap<>();
 	private int targetScore;
@@ -65,6 +70,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		
 		for (Player player : players) {
 			playerScoreMap.put(player, new X01Score(this, player));
+			super.setScore(player, playerScoreMap.get(player));
 		}
 		
 		this.currentPlayer = this.players.get(0);
@@ -80,6 +86,8 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		if (this.gameFinished) {
 			return;
 		}
+
+		this.currentScore.endTurn();
 		
 		this.currentPlayerIndex = (this.currentPlayerIndex + 1) % players.size();
 		
@@ -93,8 +101,6 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 			this.gameListener.onRoundStarted(this.rounds);
 			
 		}
-		
-		this.currentScore.endTurn();
 		
 		this.currentPlayer = this.players.get(currentPlayerIndex);
 		this.currentScore = (X01Score) this.playerScoreMap.get(currentPlayer);
@@ -139,6 +145,8 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		
 		this.currentScore.addScoreValue(0);
 		this.gameListener.onDartMissedPressed();
+		
+		terminatePreviousTurn();
 	}
 
 	@Override
@@ -155,6 +163,8 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		this.currentScore.invalidateLastThrow();
 		this.gameListener.onBounceOutPressed();
 		this.gameListener.onRemainingScoreForPlayer(this.currentPlayer, this.currentScore);
+		
+		terminatePreviousTurn();
 	}
 
 	@Override
@@ -170,6 +180,17 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		
 		this.gameListener.onPointEvent(event);
 		this.currentScore.addScoreValue(event.getScoreValue());
+		
+		terminatePreviousTurn();
+	}
+
+	private void terminatePreviousTurn() {
+		int prev = determinePreviousPlayer();
+		Player previous = this.players.get(prev);
+		Score score = this.playerScoreMap.get(previous);
+		if (score.getThrownDarts() > 0) {
+			score.terminateLastTurn();
+		}
 	}
 
 	@Override
@@ -213,6 +234,62 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 	@Override
 	public String getShortName() {
 		return Integer.toString(targetScore).concat("-Game");
+	}
+
+	@Override
+	public void undoEvent() {
+		if (this.currentScore.turnHasEvents()) {
+			
+			if (!this.currentScore.turnIsTerminated()) {
+				undoLastThrow();
+			}
+		}
+		else {
+			undoNextPlayer();
+		}
+	}
+
+	private void undoNextPlayer() {
+		if (this.currentScore.alreadyReceivedScoreEvents()) {
+			logger.warn("Undo of Next Player event ignored as the turn already had score events");
+			return;
+		}
+		
+		int prev = determinePreviousPlayer();
+		Player previous = this.players.get(prev);
+		Score score = this.playerScoreMap.get(previous);
+		
+		if (score.lastTurnTerminatedCorrect()) {
+			logger.warn("Undo of Next Player event ignored as the previous turn was terminated correctly");
+			return;
+		}
+		
+		this.currentScore.removeCurrentTurn();
+		this.currentPlayerIndex = prev;
+		this.currentPlayer = previous;
+		this.currentScore = (X01Score) this.playerScoreMap.get(currentPlayer);
+		this.currentScore.reopenTurn();
+		this.provideStatusUpdate();
+		
+		this.gameFinished = false;
+	}
+
+	private int determinePreviousPlayer() {
+		return (this.currentPlayerIndex - 1 + players.size()) % players.size();
+	}
+
+	private void undoLastThrow() {
+		this.currentScore.undoLastThrow();
+	}
+
+	@Override
+	public void redoEvent() {
+		
+	}
+
+	@Override
+	public Player getCurrentPlayer() {
+		return this.currentPlayer;
 	}
 	
 }

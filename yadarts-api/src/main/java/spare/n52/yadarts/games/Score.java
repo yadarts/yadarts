@@ -54,4 +54,21 @@ public interface Score {
 	 * @return the player for this score
 	 */
 	public Player getPlayer();
+	
+	/**
+	 * @return true if there was at least one thrown dart
+	 * or a miss / bounce out in the current turn
+	 */
+	public boolean turnHasEvents();
+
+	/**
+	 * terminate the last turn of this score. it shall not
+	 * be modifiable after termination
+	 */
+	public void terminateLastTurn();
+
+	/**
+	 * @return true if the last turn was terminated correctly
+	 */
+	public boolean lastTurnTerminatedCorrect();
 }

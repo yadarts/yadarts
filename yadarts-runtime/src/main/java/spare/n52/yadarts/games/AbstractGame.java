@@ -115,7 +115,7 @@ public abstract class AbstractGame implements Game, EventListener {
 		this.listeners.add(listener);
 	}
 	
-	private void setScore(Player p, Score s) {
+	protected void setScore(Player p, Score s) {
 		this.scores.put(p, s);
 	}
 	
@@ -301,6 +301,9 @@ public abstract class AbstractGame implements Game, EventListener {
 	/**
 	 * an implementation shall undo the last event (hit or user-caused)
 	 * if there was an event
+	 * 
+	 * A "Next player" event shall only be undone when the current turn
+	 * has no throws.
 	 */
 	public abstract void undoEvent();
 	
@@ -309,4 +312,9 @@ public abstract class AbstractGame implements Game, EventListener {
 	 * if there was one
 	 */
 	public abstract void redoEvent();
+
+	/**
+	 * @return the player who has the turn atm
+	 */
+	public abstract Player getCurrentPlayer();
 }

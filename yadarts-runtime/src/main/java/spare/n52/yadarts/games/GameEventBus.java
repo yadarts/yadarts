@@ -132,6 +132,35 @@ public class GameEventBus {
 		});		
 	}
 	
+	public void undoEvent() {
+		AbstractGame game = resolveGame();
+		
+		if (game == null) {
+			return;
+		}
+		
+		game.undoEvent();
+	}
+	
+	public void redoEvent() {
+		AbstractGame game = resolveGame();
+		
+		if (game == null) {
+			return;
+		}
+		
+		
+	}
 
+	private AbstractGame resolveGame() {
+		synchronized (this) {
+			if (this.activeGame != null) {
+				return this.activeGame;
+			}
+			else {
+				return null;
+			}
+		}
+	}
 	
 }

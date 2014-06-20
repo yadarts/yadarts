@@ -47,7 +47,7 @@ public class X01Score implements Score {
 	}
 	
 	public void invalidateLastThrow() {
-		this.currentTurn.invalidateLastThrow();
+		this.currentTurn.bounceOutLastThrow();
 	}
 	
 	/**
@@ -64,6 +64,7 @@ public class X01Score implements Score {
 	}
 
 	public void addScoreValue(int i) {
+		
 		if (this.currentTurn.isClosed() || playerFinished()) {
 			host.requestNextPlayerEvent();
 			return;
@@ -144,12 +145,22 @@ public class X01Score implements Score {
 		return getTotalDarts();
 	}
 	
+	@Override
+	public boolean turnHasEvents() {
+		return this.currentTurn.throwz.size() != 0;
+	}
+	
 	private class Turn {
 
 		List<Integer> throwz = new ArrayList<>();
 		private boolean busted;
+		private boolean alreadyReceivedScoreEvents;
+		private boolean closedWithUnthrownDarts;
+		private boolean closedWithoutThrownDarts;
+		public boolean terminatedCorrect;
 		
 		public void addThrow(int i) {
+			this.alreadyReceivedScoreEvents = true;
 			throwz.add(i);
 		}
 		
@@ -170,7 +181,7 @@ public class X01Score implements Score {
 			return 3 - throwz.size();
 		}
 
-		public void invalidateLastThrow() {
+		public void bounceOutLastThrow() {
 			if (throwz.size() > 0) {
 				throwz.remove(throwz.size()-1);
 				throwz.add(0);
@@ -188,11 +199,21 @@ public class X01Score implements Score {
 		}
 		
 		public int getThrowCount() {
+			if (closedWithUnthrownDarts) {
+				return 3;
+			}
 			return this.throwz.size();
 		}
 		
 		public boolean isClosed() {
-			return this.busted || this.throwz.size() == 3;
+			return this.closedWithUnthrownDarts || this.busted || this.throwz.size() == 3;
+		}
+
+		public void undoLastThrow() {
+			if (throwz.size() > 0) {
+				throwz.remove(throwz.size()-1);
+				this.busted = false;
+			}
 		}
 		
 	}
@@ -219,10 +240,72 @@ public class X01Score implements Score {
 
 	public void endTurn() {
 		if (!playerFinished() && !currentTurn.isClosed()) {
-			while (currentTurn.hasRemainingThrows()) {
-				currentTurn.addThrow(0);
+			if (currentTurn.hasRemainingThrows()) {
+				if (!currentTurn.busted) {
+					currentTurn.closedWithUnthrownDarts = true;
+				}
+				else {
+					currentTurn.terminatedCorrect = true;
+				}
+				
+				if (currentTurn.getRemainingThrows() == 3) {
+					currentTurn.closedWithoutThrownDarts = true;
+				}
+			}
+			else {
+				currentTurn.terminatedCorrect = true;
 			}
 		}
+		else {
+			currentTurn.terminatedCorrect = true;
+		}
+	}
+
+	public void undoLastThrow() {
+		this.currentTurn.undoLastThrow();
+		this.host.provideRemainingScore();
+	}
+
+	public void removeCurrentTurn() {
+		Turn toRemove = this.turns.get(this.turns.size()-1);
+		if (!toRemove.terminatedCorrect) {
+			this.turns.remove(toRemove);
+			startTurn();
+		}
+	}
+
+	public boolean alreadyReceivedScoreEvents() {
+		return this.currentTurn.alreadyReceivedScoreEvents;
+	}
+
+	public void reopenTurn() {
+		if (this.currentTurn.closedWithUnthrownDarts) {
+			this.currentTurn.closedWithUnthrownDarts = false;
+		}
+		
+		if (this.currentTurn.closedWithoutThrownDarts) {
+			removeCurrentTurn();
+			if (this.turns.size() > 0) {
+				this.currentTurn = this.turns.get(this.turns.size()-1);
+			}
+			else {
+				startTurn();
+			}
+		}
+	}
+
+	public boolean turnIsTerminated() {
+		return this.currentTurn.terminatedCorrect;
+	}
+
+	@Override
+	public void terminateLastTurn() {
+		this.currentTurn.terminatedCorrect = true;
+	}
+
+	@Override
+	public boolean lastTurnTerminatedCorrect() {
+		return this.currentTurn.terminatedCorrect;
 	}
 
 }
