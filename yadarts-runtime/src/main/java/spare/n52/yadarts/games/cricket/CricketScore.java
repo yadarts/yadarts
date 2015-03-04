@@ -16,8 +16,11 @@
  */
 package spare.n52.yadarts.games.cricket;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import spare.n52.yadarts.entity.Player;
@@ -37,21 +40,17 @@ public class CricketScore implements Score {
 	public CricketScore(Player player) {
 		this.player = player;
 		
-		numberHits.put(15, 0);
-		numberHits.put(16, 0);
-		numberHits.put(17, 0);
-		numberHits.put(18, 0);
-		numberHits.put(19, 0);
-		numberHits.put(20, 0);
-		numberHits.put(25, 0);
+		for (int i : CricketGame.VALID_NUMBERS) {
+			numberHits.put(i, 0);
+		}
 	}
 
 	@Override
 	public int getTotalScore() {
 		int result = 0;
 		
-		for (Integer n : this.numberHits.keySet()) {
-			Integer value = this.numberHits.get(n);
+		for (int n : this.numberHits.keySet()) {
+			int value = this.numberHits.get(n);
 			if (value > 3) {
 				result += (value - 3) * n;
 			}
@@ -97,8 +96,12 @@ public class CricketScore implements Score {
 	public boolean lastTurnTerminatedCorrect() {
 		return true;
 	}
-
+	
 	public void onPointEvent(PointEvent event) {
+		onPointEvent(event, false);
+	}
+
+	public void onPointEvent(PointEvent event, boolean playerIsLastToClose) {
 		if (this.hasThrowsLeft()) {
 			this.lastHit = event;
 			this.turnThrowCount++;
@@ -106,13 +109,23 @@ public class CricketScore implements Score {
 			
 			if (event.getBaseNumber() >= 15) {
 				Integer target = numberHits.get(event.getBaseNumber());
-				numberHits.put(event.getBaseNumber(), target + event.getMultiplier());
+				int newTarget;
+				if (playerIsLastToClose) {
+					newTarget = Math.min(3, target + event.getMultiplier());
+				}
+				else {
+					newTarget = target + event.getMultiplier();
+				}
+				numberHits.put(event.getBaseNumber(), newTarget);
 			}
-		}
+		}		
 	}
 	
 	public boolean playerHasOpened(int number) {
-		return numberHits.get(number) >= 2;
+		if (number < 15) {
+			return false;
+		}
+		return numberHits.get(number) >= 3;
 	}
 
 	public boolean hasThrowsLeft() {
@@ -135,6 +148,37 @@ public class CricketScore implements Score {
 		while (hasThrowsLeft()) {
 			onPointEvent(HitEvent.singleHitInner(0));
 		}
+		
+		this.turnThrowCount = 0;
+	}
+
+	public int getRemainingClosedSlots(int i) {
+		Integer target = this.numberHits.get(i);
+		if (target != null) {
+			return Math.max(0, 3 - target);
+		}
+		return 3;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("CricketScore for Player ");
+		sb.append(this.player.getName());
+		sb.append("; ");
+
+		List<Integer> numbers = new ArrayList<>(this.numberHits.keySet());
+		Collections.sort(numbers);
+		
+		for (Integer n : numbers) {
+			sb.append(n);
+			sb.append("=");
+			sb.append(this.numberHits.get(n));
+			sb.append("; ");
+		}
+		
+		return sb.toString();
 	}
 
 }

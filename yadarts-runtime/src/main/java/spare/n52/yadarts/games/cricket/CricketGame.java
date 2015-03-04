@@ -27,6 +27,8 @@ import spare.n52.yadarts.games.AbstractGame;
 
 public class CricketGame extends AbstractGame {
 	
+	public static final int[] VALID_NUMBERS = new int[] {15, 16, 17, 18, 19, 20, 25};
+	
 	private Player currentPlayer;
 	private CricketScore currentScore;
 	private Map<Player, CricketScore> cricketScores = new HashMap<>();
@@ -88,13 +90,31 @@ public class CricketGame extends AbstractGame {
 		}
 		
 		if (!isNumberClosed(event.getBaseNumber())) {
-			this.currentScore.onPointEvent(event);
+			if (playerIsLastToClose(event.getBaseNumber())) {
+				this.currentScore.onPointEvent(event, true);
+			}
+			else {
+				this.currentScore.onPointEvent(event);
+			}
 		}
 		else {
 			this.currentScore.onPointEvent(HitEvent.singleHitInner(0));
 		}
 		
 		this.gameListener.onPointEvent(event);
+	}
+
+	private boolean playerIsLastToClose(int number) {
+		boolean result = true;
+		
+		for (Player p : this.cricketScores.keySet()) {
+			CricketScore s = this.cricketScores.get(p);
+			if (p != this.currentPlayer && !s.playerHasOpened(number)) {
+				result = false;
+			}
+		}
+		
+		return result;
 	}
 
 	@Override
@@ -118,6 +138,15 @@ public class CricketGame extends AbstractGame {
 			}
 		}
 		
+		return true;
+	}
+
+	public boolean isFinished() {
+		for (int i : VALID_NUMBERS) {
+			if (!isNumberClosed(i)) {
+				return false;
+			}
+		}
 		return true;
 	}
 
