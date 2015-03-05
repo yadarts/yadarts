@@ -42,11 +42,14 @@ public abstract class AbstractGame implements Game, EventListener {
 	private List<GameStatusUpdateListener> listeners = new ArrayList<>();
 	private Map<Player, Score> scores = new HashMap<>();
 	private List<Player> players;
-	private List<Player> winners;
 	private Map<Player, Score> finalScores;
 
 	@Override
 	public void receiveEvent(InteractionEvent event) {
+		if (this.isFinished()) {
+			return;
+		}
+		
 		if (event instanceof UserCausedEvent) {
 			processUserCausedEvent((UserCausedEvent) event);
 		}
@@ -108,7 +111,8 @@ public abstract class AbstractGame implements Game, EventListener {
 	 * @param event a common point hit
 	 */
 	protected abstract void processPointEvent(PointEvent event);
-	
+
+	public abstract List<Player> getWinners();
 	
 	@Override
 	public synchronized void registerGameListener(GameStatusUpdateListener listener) {
@@ -121,10 +125,6 @@ public abstract class AbstractGame implements Game, EventListener {
 	
 	public Map<Player, Score> getScores() {
 		return scores;
-	}
-
-	public List<Player> getWinners() {
-		return winners;
 	}
 
 	public Map<Player, Score> getFinalScores() {
@@ -239,7 +239,6 @@ public abstract class AbstractGame implements Game, EventListener {
 
 		@Override
 		public synchronized void onGameFinished(Map<Player, Score> playerScoreMap, List<Player> winners) {
-			AbstractGame.this.winners = winners;
 			AbstractGame.this.finalScores = playerScoreMap;
 			
 			for (GameStatusUpdateListener g : listeners) {

@@ -207,6 +207,10 @@ public class CricketWorkflowTest {
 		Assert.assertTrue(getCricketScore(game, b).getRemainingClosedSlots(15) == 0);
 		
 		Assert.assertTrue(game.isFinished());
+		
+		List<Player> winners = game.getWinners();
+		Assert.assertTrue(winners.size() == 1);
+		Assert.assertTrue(winners.get(0) == a);
 	}
 
 	private CricketScore getCricketScore(CricketGame game, Player a) {

@@ -21,5 +21,7 @@ public interface Game {
 	public void registerGameListener(GameStatusUpdateListener listener);
 
 	public String getShortName();
+
+	boolean isFinished();
 	
 }

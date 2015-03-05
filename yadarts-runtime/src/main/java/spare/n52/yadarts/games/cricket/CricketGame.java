@@ -16,6 +16,7 @@
  */
 package spare.n52.yadarts.games.cricket;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import spare.n52.yadarts.entity.Player;
 import spare.n52.yadarts.entity.PointEvent;
 import spare.n52.yadarts.entity.impl.HitEvent;
 import spare.n52.yadarts.games.AbstractGame;
+import spare.n52.yadarts.games.GameStatusUpdateListener;
 
 public class CricketGame extends AbstractGame {
 	
@@ -32,6 +34,12 @@ public class CricketGame extends AbstractGame {
 	private Player currentPlayer;
 	private CricketScore currentScore;
 	private Map<Player, CricketScore> cricketScores = new HashMap<>();
+
+	private int rounds = 1;
+
+	private boolean gameFinished;
+
+	private List<Player> winners;
 
 	public CricketGame(List<Player> players) {
 		if (players == null || players.size() == 0) {
@@ -55,6 +63,13 @@ public class CricketGame extends AbstractGame {
 	}
 	
 	@Override
+	public synchronized void registerGameListener(
+			GameStatusUpdateListener listener) {
+		super.registerGameListener(listener);
+		this.gameListener.onRoundStarted(this.rounds);
+	}
+	
+	@Override
 	public String getShortName() {
 		return "Cricket";
 	}
@@ -65,10 +80,70 @@ public class CricketGame extends AbstractGame {
 		
 		List<Player> ps = getPlayers();
 		int i = ps.indexOf(this.currentPlayer);
-		this.currentPlayer = ps.get((i + 1) % ps.size());
+		i = (i + 1) % ps.size();
+		this.currentPlayer = ps.get(i);
+		
+		if (i == 0) {
+			newRoundStarted();
+		}
+		
 		this.currentScore = getCurrentScore();
 		
 		this.gameListener.onNextPlayerPressed();
+	}
+
+	private void newRoundStarted() {
+		if (isFinished()) {
+			this.gameListener.onGameFinished(getScores(), getWinners());
+		}
+		this.rounds++;
+		this.gameListener.onRoundStarted(this.rounds);		
+	}
+
+	public List<Player> getWinners() {
+		if (this.winners == null || this.winners.isEmpty()) {
+			this.winners = new ArrayList<>();
+
+			List<CricketScore> scoreList = new ArrayList<>(this.cricketScores.values());
+			
+			/*
+			 * find the maximum total score
+			 */
+			CricketScore best = scoreList.get(0);
+			for (CricketScore cs : scoreList) {
+				if (cs.getTotalScore() >= best.getTotalScore()) {
+					best = cs;
+				}
+			}
+			
+			/*
+			 * find max total score with lowest total dart count
+			 */
+			for (CricketScore cs : scoreList) {
+				if (cs.getTotalScore() == best.getTotalScore()) {
+					if (cs.getThrownDarts() <= best.getThrownDarts()) {
+						best = cs;
+					}
+				}
+			}
+			
+			this.winners.add(best.getPlayer());
+			
+			/*
+			 * find those scores that have the same score and dart count
+			 */
+			for (CricketScore cs : scoreList) {
+				if (cs.getTotalScore() == best.getTotalScore()) {
+					if (cs.getThrownDarts() == best.getThrownDarts()) {
+						if (cs != best) {
+							this.winners.add(cs.getPlayer());
+						}
+					}
+				}
+			}
+		}
+		
+		return this.winners;
 	}
 
 	@Override
@@ -141,12 +216,20 @@ public class CricketGame extends AbstractGame {
 		return true;
 	}
 
+	@Override
 	public boolean isFinished() {
+		if (this.gameFinished) {
+			return true;
+		}
+		
 		for (int i : VALID_NUMBERS) {
 			if (!isNumberClosed(i)) {
 				return false;
 			}
 		}
+		
+		this.gameFinished = true;
+		
 		return true;
 	}
 

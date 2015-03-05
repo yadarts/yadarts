@@ -93,7 +93,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		
 		if (this.currentPlayerIndex == 0) {
 			if (this.playerFinished) {
-				this.gameListener.onGameFinished(this.playerScoreMap, determineWinner());
+				this.gameListener.onGameFinished(this.playerScoreMap, getWinners());
 				this.gameFinished = true;
 				return;
 			}
@@ -110,7 +110,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		this.gameListener.onNextPlayerPressed();
 	}
 
-	private List<Player> determineWinner() {
+	public List<Player> getWinners() {
 		List<Player> winner = new ArrayList<>();
 		
 		int minDarts = Integer.MAX_VALUE;
@@ -290,6 +290,11 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 	@Override
 	public Player getCurrentPlayer() {
 		return this.currentPlayer;
+	}
+
+	@Override
+	public boolean isFinished() {
+		return this.gameFinished;
 	}
 	
 }
