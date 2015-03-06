@@ -54,7 +54,7 @@ public class DummyBoardEventProducer implements EventProducer {
 		eventQueue.add(HitEvent.tripleHit(20));
 		eventQueue.add(ButtonEvent.nextPlayer());
 		
-		eventQueue.add(HitEvent.singleHitInner(15));
+		eventQueue.add(HitEvent.singleHitInner(18));
 		eventQueue.add(HitEvent.singleHitInner(15));
 		eventQueue.add(HitEvent.singleHitInner(15));
 		eventQueue.add(ButtonEvent.nextPlayer());
@@ -75,15 +75,14 @@ public class DummyBoardEventProducer implements EventProducer {
 		eventQueue.add(ButtonEvent.nextPlayer());
 		
 		eventQueue.add(HitEvent.doubleHit(17));
-		eventQueue.add(HitEvent.doubleHit(17));
-		eventQueue.add(HitEvent.doubleHit(17));
+		eventQueue.add(HitEvent.doubleHit(16));
+		eventQueue.add(HitEvent.doubleHit(18));
 		eventQueue.add(ButtonEvent.nextPlayer());
 		
-		eventQueue.add(HitEvent.singleHitInner(8));
-		eventQueue.add(ButtonEvent.bounceOut());
-		eventQueue.add(HitEvent.singleHitInner(15));
-		eventQueue.add(ButtonEvent.dartMissed());
-		eventQueue.add(ButtonEvent.nextPlayer());
+//		eventQueue.add(HitEvent.singleHitInner(16));
+//		eventQueue.add(HitEvent.singleHitInner(15));
+//		eventQueue.add(ButtonEvent.dartMissed());
+//		eventQueue.add(ButtonEvent.nextPlayer());
 	}
 	
 	public DummyBoardEventProducer() {
@@ -111,7 +110,7 @@ public class DummyBoardEventProducer implements EventProducer {
 			public void run() {
 				while (running) {
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(5000);
 					} catch (InterruptedException e) {
 						logger.warn(e.getMessage(), e);
 					}
@@ -124,7 +123,7 @@ public class DummyBoardEventProducer implements EventProducer {
 						sendEvent(ie);
 						try {
 							if (ie instanceof UserCausedEvent && ((UserCausedEvent) ie).getType() == Type.NEXT_PLAYER) {
-								Thread.sleep(2000);
+								Thread.sleep(5000);
 							}
 							else {
 								Thread.sleep(1000);

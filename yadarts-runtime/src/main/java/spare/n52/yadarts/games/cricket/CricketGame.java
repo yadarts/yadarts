@@ -90,6 +90,7 @@ public class CricketGame extends AbstractGame {
 		this.currentScore = getCurrentScore();
 		
 		this.gameListener.onNextPlayerPressed();
+		this.gameListener.onCurrentPlayerChanged(currentPlayer, currentScore);
 	}
 
 	private void newRoundStarted() {
@@ -177,6 +178,13 @@ public class CricketGame extends AbstractGame {
 		}
 		
 		this.gameListener.onPointEvent(event);
+		
+		if (!this.currentScore.hasThrowsLeft()) {
+			this.gameListener.onTurnFinished(currentPlayer, currentScore);
+			if (currentScore.isFinished()) {
+				this.gameListener.onPlayerFinished(currentPlayer);
+			}
+		}
 	}
 
 	private boolean playerIsLastToClose(int number) {
@@ -222,8 +230,8 @@ public class CricketGame extends AbstractGame {
 			return true;
 		}
 		
-		for (int i : VALID_NUMBERS) {
-			if (!isNumberClosed(i)) {
+		for (CricketScore cs : this.cricketScores.values()) {
+			if (!cs.isFinished()) {
 				return false;
 			}
 		}

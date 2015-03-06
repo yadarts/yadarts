@@ -182,4 +182,14 @@ public class CricketScore implements Score {
 	}
 
 
+	public boolean isFinished() {
+		for (int i : CricketGame.VALID_NUMBERS) {
+			if (!this.playerHasOpened(i)) {
+				return false;
+			}
+		}
+		return false;
+	}
+
+
 }

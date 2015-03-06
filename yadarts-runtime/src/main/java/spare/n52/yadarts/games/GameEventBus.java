@@ -55,6 +55,15 @@ public class GameEventBus {
 		return instance;
 	}
 	
+	public void shutdown() {
+		try {
+			executor.shutdownNow();
+		}
+		catch (RuntimeException e) {
+			logger.warn("failed shutdown executor", e);
+		}
+	}
+	
 	public void startGame(final AbstractGame game) throws GameAlreadyActiveException {
 		synchronized (this) {
 			if (this.activeGame != null) {
