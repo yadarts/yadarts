@@ -188,7 +188,7 @@ public class CricketScore implements Score {
 				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 
