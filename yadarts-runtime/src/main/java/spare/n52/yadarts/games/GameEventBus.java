@@ -130,6 +130,7 @@ public class GameEventBus {
 					
 					try {
 						EventEngine engine = EventEngine.instance();
+						engine.removeListener(game);
 						engine.shutdown();
 					} catch (InitializationException e) {
 						logger.warn(e.getMessage());
