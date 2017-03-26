@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import spare.n52.yadarts.entity.Player;
 import spare.n52.yadarts.entity.PointEvent;
+import spare.n52.yadarts.entity.impl.HitEvent;
 import spare.n52.yadarts.games.AbstractGame;
 import spare.n52.yadarts.games.AnnotatedGame;
 import spare.n52.yadarts.games.Score;
@@ -139,7 +140,7 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 	private void provideStatusUpdate() {
 		this.gameListener.onCurrentPlayerChanged(this.currentPlayer, this.currentScore);
 		
-		this.currentScore.checkFinishingPossibility();
+		checkFinishingPossibility();
 	}
 
 	@Override
@@ -155,10 +156,10 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 
                 this.gameListener.onDartMissedPressed();
 		this.currentScore.addScoreValue(0);
-		
+                
 		terminatePreviousTurn();
 	}
-
+        
 	@Override
 	protected void onBounceOut() {
 		if (this.gameFinished) {
@@ -190,8 +191,21 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 
                 this.currentScore.addScoreValue(event.getScoreValue());
 		this.gameListener.onPointEvent(event, currentScore.getLastTurn());
-		
+                
+		if (this.currentScore.getCurrentTurn().hasRemainingThrows()) {
+			checkFinishingPossibility();
+		}
+		else {
+			turnEnded();
+		}
+                
 		terminatePreviousTurn();
+	}
+        
+	private void checkFinishingPossibility() {
+		if (currentScore.canFinish()) {
+			provideFinishingCombination(currentScore.calculateFinishingCombinations());
+		}		
 	}
 
 	private void terminatePreviousTurn() {

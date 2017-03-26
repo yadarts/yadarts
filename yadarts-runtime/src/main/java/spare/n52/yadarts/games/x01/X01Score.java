@@ -57,12 +57,6 @@ public class X01Score implements Score {
 		return this.getRemainingScore() == 0;
 	}
 	
-	void checkFinishingPossibility() {
-		if (this.canFinish()) {
-			this.host.provideFinishingCombination(this.calculateFinishingCombinations());
-		}		
-	}
-
 	public void addScoreValue(int i) {
 		
 		if (this.currentTurn.isClosed() || playerFinished()) {
@@ -81,14 +75,7 @@ public class X01Score implements Score {
 		if (playerFinished()) {
 			this.host.firePlayerFinishedEvent();
 		}
-		
-		if (this.currentTurn.hasRemainingThrows()) {
-			checkFinishingPossibility();
-		}
-		else {
-			this.host.turnEnded();
-		}
-		
+                
 		this.host.provideRemainingScore();
 	}
 
@@ -155,9 +142,11 @@ public class X01Score implements Score {
             return currentTurn;
         }
 
-        
+        public Turn getCurrentTurn() {
+            return currentTurn;
+        }
 	
-	private class Turn implements spare.n52.yadarts.games.Turn {
+	public class Turn implements spare.n52.yadarts.games.Turn {
 
 		List<Integer> throwz = new ArrayList<>();
 		private boolean busted;
