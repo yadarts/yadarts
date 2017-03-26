@@ -251,10 +251,10 @@ public abstract class AbstractGame implements Game, EventListener {
 		}
 
 		@Override
-		public synchronized void onPointEvent(PointEvent event) {
+		public synchronized void onPointEvent(PointEvent event, Turn turn) {
 			for (GameStatusUpdateListener g : listeners) {
 				try {
-					g.onPointEvent(event);
+					g.onPointEvent(event, turn);
 				} catch (RuntimeException e) {
 					logger.warn(e.getMessage(), e);
 				}

@@ -177,7 +177,7 @@ public class CricketGame extends AbstractGame {
 			this.currentScore.onPointEvent(HitEvent.singleHitInner(0));
 		}
 		
-		this.gameListener.onPointEvent(event);
+		this.gameListener.onPointEvent(event, null);
 		
 		if (!this.currentScore.hasThrowsLeft()) {
 			this.gameListener.onTurnFinished(currentPlayer, currentScore);

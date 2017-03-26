@@ -187,9 +187,9 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 			this.gameListener.requestNextPlayerEvent();
 			return;
 		}
-		
-		this.gameListener.onPointEvent(event);
-		this.currentScore.addScoreValue(event.getScoreValue());
+
+                this.currentScore.addScoreValue(event.getScoreValue());
+		this.gameListener.onPointEvent(event, currentScore.getLastTurn());
 		
 		terminatePreviousTurn();
 	}

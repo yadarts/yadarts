@@ -99,8 +99,9 @@ public interface GameStatusUpdateListener {
 	 * provides a generic event and its points.
 	 * 
 	 * @param event the hit
+         * @param turn the related turn, can be null
 	 */
-	void onPointEvent(PointEvent event);
+	void onPointEvent(PointEvent event, Turn turn);
 	
 	/**
 	 * next player button has been pressed

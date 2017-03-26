@@ -66,7 +66,7 @@ public class GameStatusUpdateAdapter implements GameStatusUpdateListener {
 	}
 
 	@Override
-	public void onPointEvent(PointEvent event) {
+	public void onPointEvent(PointEvent event, Turn turn) {
 	}
 
 	@Override

@@ -30,6 +30,7 @@ import spare.n52.yadarts.entity.PointEvent;
 import spare.n52.yadarts.entity.impl.PlayerImpl;
 import spare.n52.yadarts.games.GameStatusUpdateListener;
 import spare.n52.yadarts.games.Score;
+import spare.n52.yadarts.games.Turn;
 import spare.n52.yadarts.games.x01.GenericX01Game;
 
 public class LocalTestRuntime {
@@ -111,7 +112,7 @@ public class LocalTestRuntime {
 			}
 
 			@Override
-			public void onPointEvent(PointEvent event) {
+			public void onPointEvent(PointEvent event, Turn turn) {
 				//TODO
 			}
 
