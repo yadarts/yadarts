@@ -78,7 +78,17 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 		this.currentScore.startTurn();
 		
 		this.gameListener.onRoundStarted(this.rounds);
-		provideStatusUpdate();
+                
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                        }
+                        provideStatusUpdate();
+                    }
+                }).start();
 	}
 
 	@Override
@@ -142,9 +152,9 @@ public class GenericX01Game extends AbstractGame implements X01Host {
 			this.gameListener.requestNextPlayerEvent();
 			return;
 		}
-		
+
+                this.gameListener.onDartMissedPressed();
 		this.currentScore.addScoreValue(0);
-		this.gameListener.onDartMissedPressed();
 		
 		terminatePreviousTurn();
 	}

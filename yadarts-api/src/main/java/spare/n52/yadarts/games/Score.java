@@ -71,4 +71,10 @@ public interface Score {
 	 * @return true if the last turn was terminated correctly
 	 */
 	public boolean lastTurnTerminatedCorrect();
+        
+        /**
+         * @return the last executed turn of this score
+         */
+        Turn getLastTurn();
+        
 }

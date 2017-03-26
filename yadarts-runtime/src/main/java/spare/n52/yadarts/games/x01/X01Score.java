@@ -149,8 +149,15 @@ public class X01Score implements Score {
 	public boolean turnHasEvents() {
 		return this.currentTurn.throwz.size() != 0;
 	}
+
+        @Override
+        public spare.n52.yadarts.games.Turn getLastTurn() {
+            return currentTurn;
+        }
+
+        
 	
-	private class Turn {
+	private class Turn implements spare.n52.yadarts.games.Turn {
 
 		List<Integer> throwz = new ArrayList<>();
 		private boolean busted;
@@ -215,6 +222,10 @@ public class X01Score implements Score {
 				this.busted = false;
 			}
 		}
+
+                public boolean isBusted() {
+                    return busted;
+                }
 		
 	}
 

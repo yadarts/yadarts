@@ -27,6 +27,7 @@ import spare.n52.yadarts.entity.Player;
 import spare.n52.yadarts.entity.PointEvent;
 import spare.n52.yadarts.entity.impl.HitEvent;
 import spare.n52.yadarts.games.Score;
+import spare.n52.yadarts.games.Turn;
 
 public class CricketScore implements Score {
 
@@ -159,6 +160,16 @@ public class CricketScore implements Score {
 		}
 		return 3;
 	}
+
+        @Override
+        public Turn getLastTurn() {
+            return new Turn() {
+                @Override
+                public boolean isBusted() {
+                    return false;
+                }
+            };
+        }
 	
 	@Override
 	public String toString() {
