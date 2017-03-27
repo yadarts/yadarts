@@ -37,10 +37,10 @@ import spare.n52.yadarts.event.EventListener;
  */
 public abstract class AbstractGame implements Game, EventListener {
 	
-	private static final Logger logger = LoggerFactory.getLogger(AbstractGame.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractGame.class);
 	protected GameStatusUpdateListener gameListener = new CascadingGameListener();
-	private List<GameStatusUpdateListener> listeners = new ArrayList<>();
-	private Map<Player, Score> scores = new HashMap<>();
+	private final List<GameStatusUpdateListener> listeners = new ArrayList<>();
+	private final Map<Player, Score> scores = new HashMap<>();
 	private List<Player> players;
 	private Map<Player, Score> finalScores;
 
@@ -151,7 +151,7 @@ public abstract class AbstractGame implements Game, EventListener {
 				try {
 					g.onFinishingCombination(finishingCombinations);
 				} catch (RuntimeException e) {
-					logger.warn(e.getMessage(), e);
+					LOG.warn(e.getMessage(), e);
 				}
 			}
 		}
@@ -163,7 +163,7 @@ public abstract class AbstractGame implements Game, EventListener {
 				try {
 					g.onCurrentPlayerChanged(currentPlayer, score);
 				} catch (RuntimeException e) {
-					logger.warn(e.getMessage(), e);
+					LOG.warn(e.getMessage(), e);
 				}
 			}			
 		}
@@ -175,7 +175,7 @@ public abstract class AbstractGame implements Game, EventListener {
 				try {
 					g.onBust(currentPlayer, score);
 				} catch (RuntimeException e) {
-					logger.warn(e.getMessage(), e);
+					LOG.warn(e.getMessage(), e);
 				}
 			}				
 		}
@@ -186,7 +186,7 @@ public abstract class AbstractGame implements Game, EventListener {
 				try {
 					g.onRoundStarted(roundNumber);
 				} catch (RuntimeException e) {
-					logger.warn(e.getMessage(), e);
+					LOG.warn(e.getMessage(), e);
 				}
 			}				
 		}
@@ -198,7 +198,7 @@ public abstract class AbstractGame implements Game, EventListener {
 				try {
 					g.onTurnFinished(player, score);
 				} catch (RuntimeException e) {
-					logger.warn(e.getMessage(), e);
+					LOG.warn(e.getMessage(), e);
 				}
 			}				
 		}
@@ -210,7 +210,7 @@ public abstract class AbstractGame implements Game, EventListener {
 				try {
 					g.onRemainingScoreForPlayer(player, score);
 				} catch (RuntimeException e) {
-					logger.warn(e.getMessage(), e);
+					LOG.warn(e.getMessage(), e);
 				}
 			}				
 		}
@@ -221,7 +221,7 @@ public abstract class AbstractGame implements Game, EventListener {
 				try {
 					g.requestNextPlayerEvent();
 				} catch (RuntimeException e) {
-					logger.warn(e.getMessage(), e);
+					LOG.warn(e.getMessage(), e);
 				}
 			}				
 		}
@@ -232,7 +232,7 @@ public abstract class AbstractGame implements Game, EventListener {
 				try {
 					g.onPlayerFinished(player);
 				} catch (RuntimeException e) {
-					logger.warn(e.getMessage(), e);
+					LOG.warn(e.getMessage(), e);
 				}
 			}				
 		}
@@ -245,7 +245,7 @@ public abstract class AbstractGame implements Game, EventListener {
 				try {
 					g.onGameFinished(playerScoreMap, winners);
 				} catch (RuntimeException e) {
-					logger.warn(e.getMessage(), e);
+					LOG.warn(e.getMessage(), e);
 				}
 			}				
 		}
@@ -256,7 +256,7 @@ public abstract class AbstractGame implements Game, EventListener {
 				try {
 					g.onPointEvent(event, turn);
 				} catch (RuntimeException e) {
-					logger.warn(e.getMessage(), e);
+					LOG.warn(e.getMessage(), e);
 				}
 			}				
 		}
@@ -267,7 +267,7 @@ public abstract class AbstractGame implements Game, EventListener {
 				try {
 					g.onNextPlayerPressed();
 				} catch (RuntimeException e) {
-					logger.warn(e.getMessage(), e);
+					LOG.warn(e.getMessage(), e);
 				}
 			}				
 		}
@@ -278,7 +278,7 @@ public abstract class AbstractGame implements Game, EventListener {
 				try {
 					g.onBounceOutPressed();
 				} catch (RuntimeException e) {
-					logger.warn(e.getMessage(), e);
+					LOG.warn(e.getMessage(), e);
 				}
 			}				
 		}
@@ -289,7 +289,7 @@ public abstract class AbstractGame implements Game, EventListener {
 				try {
 					g.onDartMissedPressed();
 				} catch (RuntimeException e) {
-					logger.warn(e.getMessage(), e);
+					LOG.warn(e.getMessage(), e);
 				}
 			}				
 		}
