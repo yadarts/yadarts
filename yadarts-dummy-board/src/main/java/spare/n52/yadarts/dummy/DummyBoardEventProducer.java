@@ -61,7 +61,7 @@ public class DummyBoardEventProducer implements EventProducer {
 		
 		eventQueue.add(HitEvent.tripleHit(20));
 		eventQueue.add(HitEvent.tripleHit(17));
-		eventQueue.add(HitEvent.doubleHit(5));
+		eventQueue.add(HitEvent.doubleHit(6));
 		eventQueue.add(ButtonEvent.nextPlayer());
 		
 		eventQueue.add(HitEvent.singleHitInner(25));
@@ -126,7 +126,7 @@ public class DummyBoardEventProducer implements EventProducer {
 								Thread.sleep(5000);
 							}
 							else {
-								Thread.sleep(1000);
+								Thread.sleep(5000);
 							}
 						} catch (InterruptedException e) {
 							logger.warn(e.getMessage(), e);

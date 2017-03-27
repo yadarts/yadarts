@@ -42,33 +42,32 @@ public class GameStatusUpdateListenerTest {
 
     @Test
     public void testSequences() {
-        final List<Integer> result = new ArrayList<>();
+        final List<String> result = new ArrayList<>();
         
         GameStatusUpdateListener listener = Mockito.mock(GameStatusUpdateListener.class);
         
         Mockito.doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                result.add(4);
+                result.add("finish");
                 return null;
             }
         }).when(listener).onTurnFinished(Matchers.any(Player.class), Matchers.any(Score.class));
         
-        final AtomicInteger counter = new AtomicInteger(1);
         Mockito.doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                result.add(counter.getAndIncrement());
+                result.add("hit");
                 return null;
             }
         }).when(listener).onPointEvent(Matchers.any(PointEvent.class), Matchers.any(Turn.class));
         
         invokeTurnExecution(listener);
         
-        int i = 1;
-        for (Integer integer : result) {
-            Assert.assertThat(integer, CoreMatchers.is(i++));
-        }
+        Assert.assertThat(result.get(0), CoreMatchers.is("hit"));
+        Assert.assertThat(result.get(1), CoreMatchers.is("hit"));
+        Assert.assertThat(result.get(2), CoreMatchers.is("hit"));
+        Assert.assertThat(result.get(3), CoreMatchers.is("finish"));
     }
 
     private void invokeTurnExecution(GameStatusUpdateListener listener) {
@@ -81,23 +80,22 @@ public class GameStatusUpdateListenerTest {
     
     @Test
     public void testBustSequence() {
-        final List<Integer> result = new ArrayList<>();
+        final List<String> result = new ArrayList<>();
         
         GameStatusUpdateListener listener = Mockito.mock(GameStatusUpdateListener.class);
         
         Mockito.doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                result.add(4);
+                result.add("finish");
                 return null;
             }
         }).when(listener).onTurnFinished(Matchers.any(Player.class), Matchers.any(Score.class));
         
-        final AtomicInteger counter = new AtomicInteger(1);
         Mockito.doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                result.add(counter.getAndIncrement());
+                result.add("hit");
                 return null;
             }
         }).when(listener).onPointEvent(Matchers.any(PointEvent.class), Matchers.any(Turn.class));
@@ -105,18 +103,18 @@ public class GameStatusUpdateListenerTest {
         Mockito.doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                result.add(10);
+                result.add("bust");
                 return null;
             }
         }).when(listener).onBust(Matchers.any(Player.class), Matchers.any(Score.class));
         
         invokeBustTurnExecution(listener);
         
-        Assert.assertThat(result.get(0), CoreMatchers.is(1));
-        Assert.assertThat(result.get(1), CoreMatchers.is(2));
-        Assert.assertThat(result.get(2), CoreMatchers.is(10));
-        Assert.assertThat(result.get(3), CoreMatchers.is(3));
-        Assert.assertThat(result.get(4), CoreMatchers.is(4));
+        Assert.assertThat(result.get(0), CoreMatchers.is("hit"));
+        Assert.assertThat(result.get(1), CoreMatchers.is("hit"));
+        Assert.assertThat(result.get(2), CoreMatchers.is("hit"));
+        Assert.assertThat(result.get(3), CoreMatchers.is("bust"));
+        Assert.assertThat(result.get(4), CoreMatchers.is("finish"));
     }
 
     private void invokeBustTurnExecution(GameStatusUpdateListener listener) {
