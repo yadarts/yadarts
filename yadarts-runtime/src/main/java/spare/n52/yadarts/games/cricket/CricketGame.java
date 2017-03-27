@@ -196,13 +196,13 @@ public class CricketGame extends AbstractGame {
         
         if (!this.currentScore.hasThrowsLeft()) {
             this.gameListener.onTurnFinished(currentPlayer, currentScore);
-            if (currentScore.isFinished()) {
-                this.gameListener.onPlayerFinished(currentPlayer);
-            }
         }
         
         if (isFinished()) {
             this.gameListener.onGameFinished(convertScore(cricketScores), getWinners());
+            for (Player winner : winners) {
+                this.gameListener.onPlayerFinished(winner);
+            }
         }
     }
     
